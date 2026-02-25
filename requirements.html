@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__FEATURE_NAME__ — Requirements Input</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css">
+<style>
+  :root, [data-theme="dark"] {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #242836; --surface3: #2e3345;
+    --border: rgba(255,255,255,0.06); --border-hover: rgba(255,255,255,0.12);
+    --text: #e2e4e9; --text-dim: #7a8194; --text-bright: #fff;
+    --green: #34d399; --green-bg: rgba(52,211,153,0.08); --green-border: rgba(52,211,153,0.20);
+    --blue: #60a5fa; --blue-bg: rgba(96,165,250,0.08); --blue-border: rgba(96,165,250,0.20);
+    --amber: #fbbf24; --amber-bg: rgba(251,191,36,0.08); --amber-border: rgba(251,191,36,0.20);
+    --purple: #a78bfa; --purple-bg: rgba(167,139,250,0.08); --purple-border: rgba(167,139,250,0.20);
+    --rose: #fb7185; --rose-bg: rgba(251,113,133,0.08); --rose-border: rgba(251,113,133,0.20);
+    --cyan: #22d3ee; --cyan-bg: rgba(34,211,238,0.08); --cyan-border: rgba(34,211,238,0.20);
+    --red: #ef4444; --red-bg: rgba(239,68,68,0.08); --red-border: rgba(239,68,68,0.25);
+    --radius: 10px; --radius-sm: 6px;
+  }
+  [data-theme="light"] {
+    --bg: #f5f5f7; --surface: #ffffff; --surface2: #f0f0f2; --surface3: #e5e5ea;
+    --border: rgba(0,0,0,0.08); --border-hover: rgba(0,0,0,0.15);
+    --text: #374151; --text-dim: #8b8fa3; --text-bright: #111827;
+    --green: #059669; --green-bg: rgba(5,150,105,0.08); --green-border: rgba(5,150,105,0.20);
+    --blue: #2563eb; --blue-bg: rgba(37,99,235,0.08); --blue-border: rgba(37,99,235,0.20);
+    --amber: #d97706; --amber-bg: rgba(217,119,6,0.08); --amber-border: rgba(217,119,6,0.20);
+    --purple: #7c3aed; --purple-bg: rgba(124,58,237,0.08); --purple-border: rgba(124,58,237,0.20);
+    --rose: #e11d48; --rose-bg: rgba(225,29,72,0.06); --rose-border: rgba(225,29,72,0.18);
+    --cyan: #0891b2; --cyan-bg: rgba(8,145,178,0.08); --cyan-border: rgba(8,145,178,0.20);
+    --red: #dc2626; --red-bg: rgba(220,38,38,0.06); --red-border: rgba(220,38,38,0.20);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    padding: 2.5rem 3.5rem; max-width: 1200px; margin: 0 auto;
+  }
+
+  /* Header */
+  .page-header { margin-bottom: 2rem; }
+  .page-header h1 {
+    font-size: 2rem; font-weight: 700; color: var(--text-bright); letter-spacing: -0.02em;
+  }
+  .page-header h1 span {
+    background: linear-gradient(135deg, var(--purple), var(--rose));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .page-subtitle { color: var(--text-dim); font-size: 0.95rem; margin-top: 0.35rem; }
+  .page-subtitle code {
+    background: var(--surface2); padding: 0.15rem 0.5rem; border-radius: 4px;
+    font-family: 'Geist Mono', monospace; font-size: 0.88rem; color: var(--text);
+  }
+
+  /* Workflow steps */
+  .workflow {
+    display: flex; gap: 0; margin-bottom: 2rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  }
+  .workflow-step {
+    flex: 1; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.6rem;
+    border-right: 1px solid var(--border); position: relative;
+  }
+  .workflow-step:last-child { border-right: none; }
+  .workflow-step.active { background: var(--purple-bg); }
+  .workflow-step.done { background: var(--green-bg); }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 0.7rem;
+    font-weight: 700; flex-shrink: 0;
+  }
+  .workflow-step.active .step-num { background: var(--purple); color: var(--bg); }
+  .workflow-step.done .step-num { background: var(--green); color: var(--bg); }
+  .workflow-step .step-num { background: var(--surface2); color: var(--text-dim); }
+  .step-label { font-size: 0.78rem; font-weight: 600; }
+  .workflow-step.active .step-label { color: var(--purple); }
+  .workflow-step.done .step-label { color: var(--green); }
+  .step-label { color: var(--text-dim); }
+  .step-desc { font-size: 0.65rem; color: var(--text-dim); }
+
+  /* Feature meta */
+  .feature-meta {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;
+  }
+  .meta-field {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0.85rem 1.1rem;
+  }
+  .meta-label {
+    font-size: 0.7rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 0.3rem;
+  }
+  .meta-input {
+    font-family: 'Geist Mono', monospace; font-size: 0.95rem; background: transparent;
+    border: 1px solid transparent; border-radius: 4px; padding: 0.3rem 0.5rem;
+    color: var(--text-bright); outline: none; width: 100%; font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .meta-input:hover { border-color: var(--border-hover); background: var(--surface2); }
+  .meta-input:focus { border-color: var(--purple); background: var(--surface2); }
+
+  /* VM cards */
+  .vm-list { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+  .vm-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; transition: border-color 0.15s ease;
+  }
+  .vm-card:hover { border-color: var(--border-hover); }
+  .vm-card.is-root { border-left: 4px solid var(--purple); }
+  .vm-card:not(.is-root) { border-left: 4px solid var(--amber); }
+
+  .vm-header {
+    display: flex; align-items: center; gap: 0.6rem; padding: 0.85rem 1.1rem;
+    cursor: pointer; user-select: none;
+  }
+  .vm-header:hover { background: rgba(255,255,255,0.015); }
+  .vm-toggle {
+    background: none; border: none; color: var(--text-dim); cursor: pointer;
+    font-size: 0.85rem; padding: 0; line-height: 1; transition: color 0.15s;
+  }
+  .vm-toggle:hover { color: var(--text); }
+  .vm-name-input {
+    font-family: 'Geist Mono', monospace; font-size: 1.05rem; font-weight: 600;
+    background: transparent; border: 1px solid transparent; border-radius: 4px;
+    padding: 0.2rem 0.5rem; color: var(--text-bright); outline: none;
+    flex: 1; min-width: 0; transition: all 0.15s ease;
+  }
+  .vm-name-input:hover { border-color: var(--border-hover); background: var(--surface2); }
+  .vm-name-input:focus { border-color: var(--purple); background: var(--surface2); }
+  .vm-name-input::placeholder { color: var(--text-dim); }
+
+  .vm-badges { display: flex; gap: 0.35rem; align-items: center; flex-shrink: 0; }
+  .badge {
+    font-size: 0.65rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .badge-root { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .badge-child { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .badge-count { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .parent-select {
+    font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 20px;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+    cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
+  }
+  .parent-select:hover { border-color: var(--border-hover); }
+  .parent-select:focus { border-color: var(--purple); }
+
+  .vm-remove {
+    background: none; border: 1px solid transparent; color: var(--text-dim);
+    cursor: pointer; font-size: 0.82rem; padding: 0.2rem 0.45rem; border-radius: 4px;
+    transition: all 0.15s ease; line-height: 1;
+  }
+  .vm-remove:hover { color: var(--red); background: var(--red-bg); border-color: var(--red-border); }
+
+  /* VM body */
+  .vm-body {
+    padding: 0 1.1rem 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.5rem;
+  }
+  .vm-body.collapsed { display: none; }
+
+  .input-section { }
+  .input-section-full { grid-column: 1 / -1; }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.4rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border);
+  }
+  .section-title {
+    font-size: 0.75rem; font-weight: 600; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .section-title .icon { font-size: 0.85rem; }
+  .section-count {
+    font-family: 'Geist Mono', monospace; font-size: 0.75rem;
+    font-weight: 700; color: var(--text-dim);
+  }
+  .section-hint {
+    font-size: 0.68rem; color: var(--text-dim); margin-bottom: 0.4rem;
+    font-style: italic; opacity: 0.7;
+  }
+
+  /* Requirement items */
+  .req-list { display: flex; flex-direction: column; gap: 0.15rem; }
+  .req-item {
+    display: flex; align-items: flex-start; gap: 0.4rem; padding: 0.25rem 0.35rem;
+    border-radius: 4px; transition: background 0.1s; group: true;
+  }
+  .req-item:hover { background: rgba(255,255,255,0.02); }
+  .req-item:hover .item-remove { opacity: 1; }
+  .req-bullet {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--purple);
+    flex-shrink: 0; margin-top: 0.5rem; opacity: 0.6;
+  }
+  .req-text {
+    font-size: 0.85rem; color: var(--text); line-height: 1.55; flex: 1;
+    background: transparent; border: 1px solid transparent; border-radius: 3px;
+    padding: 0.1rem 0.3rem; outline: none; resize: none; overflow: hidden;
+    font-family: 'Geist', -apple-system, sans-serif;
+    transition: all 0.15s ease; min-height: 1.6em;
+  }
+  .req-text:hover { border-color: var(--border-hover); background: var(--surface2); }
+  .req-text:focus { border-color: var(--purple); background: var(--surface2); }
+  .item-remove {
+    opacity: 0; cursor: pointer; font-size: 0.7rem; color: var(--text-dim);
+    transition: opacity 0.15s ease; padding: 0.15rem 0.25rem; border-radius: 3px;
+    background: none; border: none; flex-shrink: 0; margin-top: 0.15rem;
+  }
+  .item-remove:hover { color: var(--red); background: var(--red-bg); }
+
+  /* API call items */
+  .api-item {
+    display: flex; flex-direction: column; gap: 0.2rem; padding: 0.4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.03); border-radius: 4px;
+  }
+  .api-item:last-of-type { border-bottom: none; }
+  .api-item:hover { background: rgba(255,255,255,0.02); }
+  .api-item:hover .item-remove { opacity: 1; }
+  .api-top { display: flex; align-items: center; gap: 0.4rem; }
+  .api-input {
+    font-family: 'Geist Mono', monospace; font-size: 0.82rem;
+    background: transparent; border: 1px solid transparent; border-radius: 3px;
+    padding: 0.15rem 0.4rem; color: var(--text); outline: none;
+    transition: all 0.15s ease; flex: 1;
+  }
+  .api-input:hover { border-color: var(--border-hover); background: var(--surface2); }
+  .api-input:focus { border-color: var(--purple); background: var(--surface2); }
+  .api-input.endpoint { color: var(--cyan); }
+  .api-input.trigger { color: var(--amber); font-size: 0.75rem; }
+  .api-labels { display: flex; gap: 0.5rem; padding-left: 0.4rem; }
+  .api-label {
+    font-size: 0.6rem; font-weight: 600; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  /* Add buttons */
+  .add-input {
+    font-size: 0.82rem; font-family: 'Geist', -apple-system, sans-serif;
+    background: transparent; border: 1px dashed var(--border); border-radius: 4px;
+    padding: 0.25rem 0.5rem; color: var(--text-dim); outline: none;
+    width: 100%; margin-top: 0.3rem; transition: all 0.15s ease;
+  }
+  .add-input::placeholder { color: var(--text-dim); opacity: 0.5; }
+  .add-input:focus { border-color: var(--purple); border-style: solid; color: var(--text); background: var(--surface2); }
+  .add-input.mono { font-family: 'Geist Mono', monospace; }
+
+  .add-vm-btn {
+    background: transparent; border: 1px dashed var(--border); border-radius: var(--radius);
+    color: var(--text-dim); font-size: 0.9rem; padding: 0.75rem 1.2rem; cursor: pointer;
+    transition: all 0.15s ease; width: 100%; text-align: left; margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .add-vm-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-bg); }
+  .add-vm-btn .plus { font-size: 1.2rem; font-weight: 300; }
+
+  /* Generate section */
+  .generate-section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.5rem; margin-bottom: 2rem;
+  }
+  .generate-section h2 {
+    font-size: 1.1rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.25rem;
+  }
+  .generate-subtitle {
+    color: var(--text-dim); font-size: 0.82rem; margin-bottom: 1rem; line-height: 1.5;
+  }
+  .generate-actions { display: flex; gap: 0.65rem; flex-wrap: wrap; }
+  .btn {
+    font-size: 0.85rem; font-weight: 500; padding: 0.6rem 1.2rem; border-radius: var(--radius-sm);
+    cursor: pointer; transition: all 0.15s ease; border: 1px solid;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .btn-generate {
+    background: var(--purple-bg); border-color: var(--purple-border); color: var(--purple);
+    font-weight: 600;
+  }
+  .btn-generate:hover { background: rgba(167,139,250,0.18); }
+  .btn-preview {
+    background: var(--cyan-bg); border-color: var(--cyan-border); color: var(--cyan);
+    font-weight: 600;
+  }
+  .btn-preview:hover { background: rgba(34,211,238,0.18); }
+  .btn-export {
+    background: var(--green-bg); border-color: var(--green-border); color: var(--green);
+  }
+  .btn-export:hover { background: rgba(52,211,153,0.15); }
+  .btn-secondary {
+    background: var(--surface2); border-color: var(--border); color: var(--text);
+  }
+  .btn-secondary:hover { background: var(--surface3); border-color: var(--border-hover); }
+
+  /* Stats */
+  .stats { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0.65rem 1rem; flex: 1; min-width: 100px;
+  }
+  .stat-value { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+  .stat-label {
+    font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase;
+    letter-spacing: 0.06em; margin-top: 0.2rem;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem; background: var(--green-bg);
+    border: 1px solid var(--green-border); color: var(--green); padding: 0.6rem 1.2rem;
+    border-radius: var(--radius); font-size: 0.82rem; font-weight: 500; z-index: 2000;
+    opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+  }
+  .toast.visible { opacity: 1; }
+
+  /* Screenshots */
+  .screenshot-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem; margin-bottom: 0.5rem;
+  }
+  .screenshot-thumb {
+    position: relative; border-radius: var(--radius-sm); overflow: hidden;
+    border: 1px solid var(--border); aspect-ratio: 4/3; cursor: pointer;
+  }
+  .screenshot-thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .screenshot-thumb:hover { border-color: var(--border-hover); }
+  .screenshot-remove {
+    position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7);
+    border: none; color: var(--red); font-size: 0.7rem; width: 20px; height: 20px;
+    border-radius: 50%; cursor: pointer; display: none; align-items: center;
+    justify-content: center; line-height: 1;
+  }
+  .screenshot-thumb:hover .screenshot-remove { display: flex; }
+  .screenshot-drop {
+    border: 1px dashed var(--border); border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem; text-align: center; color: var(--text-dim);
+    font-size: 0.75rem; cursor: pointer; transition: all 0.15s ease;
+  }
+  .screenshot-drop:hover { border-color: var(--purple-border); color: var(--purple); background: var(--purple-bg); }
+  .screenshot-drop.dragover { border-color: var(--green-border); color: var(--green); background: var(--green-bg); border-style: solid; }
+  .drop-icon { margin-right: 0.3rem; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center;
+    align-items: center; cursor: pointer;
+  }
+  .lightbox.visible { display: flex; }
+  .lightbox img { max-width: 90%; max-height: 90%; border-radius: var(--radius); }
+
+  .page-footer {
+    margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
+    color: var(--text-dim); font-size: 0.75rem; display: flex;
+    justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    position: fixed; top: 1.25rem; right: 1.5rem; z-index: 100;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 0.3rem; cursor: pointer; display: flex; align-items: center;
+    gap: 0; width: 52px; height: 28px; transition: all 0.3s ease;
+  }
+  .theme-toggle:hover { border-color: var(--border-hover); }
+  .theme-toggle .toggle-track {
+    width: 100%; height: 100%; border-radius: 20px; position: relative;
+  }
+  .theme-toggle .toggle-thumb {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--purple);
+    position: absolute; top: 50%; transform: translateY(-50%);
+    left: 2px; transition: left 0.3s ease;
+    display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+  }
+  [data-theme="light"] .theme-toggle .toggle-thumb { left: calc(100% - 22px); }
+
+  @media (max-width: 768px) {
+    body { padding: 1rem; }
+    .vm-body { grid-template-columns: 1fr; }
+    .feature-meta { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+  <div class="toggle-track"><div class="toggle-thumb" id="themeIcon">&#x1F319;</div></div>
+</div>
+
+<div class="page-header">
+  <h1><span id="featureTitle">__FEATURE_NAME__</span> &mdash; Requirements</h1>
+  <div class="page-subtitle">
+    Define screens, requirements, and API calls. Then let Claude Code propose the architecture.
+  </div>
+</div>
+
+<div class="workflow">
+  <div class="workflow-step active" id="ws1">
+    <div class="step-num">1</div>
+    <div><div class="step-label">Define Screens</div><div class="step-desc">PM / Designer</div></div>
+  </div>
+  <div class="workflow-step" id="ws2">
+    <div class="step-num">2</div>
+    <div><div class="step-label">Add API Calls</div><div class="step-desc">Engineer</div></div>
+  </div>
+  <div class="workflow-step" id="ws3">
+    <div class="step-num">3</div>
+    <div><div class="step-label">Edge Cases &amp; Errors</div><div class="step-desc">PM + Engineer</div></div>
+  </div>
+  <div class="workflow-step" id="ws4">
+    <div class="step-num">4</div>
+    <div><div class="step-label">Generate Architecture</div><div class="step-desc">Claude Code</div></div>
+  </div>
+</div>
+
+<div class="stats" id="statsBar"></div>
+
+<div class="feature-meta">
+  <div class="meta-field">
+    <div class="meta-label">Feature Name</div>
+    <input class="meta-input" id="featureName" value="__FEATURE_NAME__" oninput="updateTitle()">
+  </div>
+  <div class="meta-field">
+    <div class="meta-label">Output Path</div>
+    <input class="meta-input" id="outputPath" value="__OUTPUT_PATH__">
+  </div>
+</div>
+
+<div class="vm-list" id="vmList"></div>
+
+<button class="add-vm-btn" onclick="addVM()">
+  <span class="plus">+</span> Add a screen
+</button>
+
+<div class="generate-section">
+  <h2>Generate Architecture</h2>
+  <div class="generate-subtitle">
+    When you're done defining screens and requirements, generate a prompt for Claude Code.
+    It will propose the full @StateReducer view model tree: state properties, actions, effects,
+    parent-child composition, ownership types, and navigation.
+  </div>
+  <div class="generate-actions">
+    <button class="btn btn-generate" onclick="generatePrompt()">Copy prompt for Claude Code</button>
+    <button class="btn btn-preview" onclick="previewTree()">Preview tree</button>
+    <button class="btn btn-export" onclick="exportJson()">Export as JSON</button>
+    <button class="btn btn-secondary" onclick="importJson()">Import JSON</button>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<div class="page-footer">
+  <span>Requirements Input &mdash; @StateReducer</span>
+  <span>__FEATURE_NAME__ &mdash; Generated 2026-02-25 22:58</span>
+</div>
+
+<!-- Hidden file inputs -->
+<input type="file" id="fileInput" accept=".json" style="display:none" onchange="handleImport(event)">
+<input type="file" id="screenshotFileInput" accept="image/*" multiple style="display:none" onchange="handleScreenshotFileInput(event)">
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="Screenshot preview">
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// Data model
+// ---------------------------------------------------------------
+let vmIdCounter = 0;
+let vms = [];
+
+function createVM(name, parentId) {
+  return {
+    id: vmIdCounter++,
+    name: name || '',
+    parentId: parentId ?? null,
+    requirements: [],
+    screenshots: [],
+    apiCalls: [],
+    edgeCases: [],
+    externalDependencies: [],
+    errorHandling: [],
+    collapsed: false
+  };
+}
+
+// Start with one root VM
+function init() {
+  const root = createVM('', null);
+  vms.push(root);
+  render();
+}
+
+// ---------------------------------------------------------------
+// Rendering
+// ---------------------------------------------------------------
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;'); }
+
+function getVM(id) { return vms.find(v => v.id === id); }
+
+function getChildren(id) { return vms.filter(v => v.parentId === id); }
+
+function isRoot(vm) { return vm.parentId === null; }
+
+function getVMLabel(vm) {
+  return (vm.name || 'Unnamed') + 'ViewModel';
+}
+
+function renderStats() {
+  const totalReqs = vms.reduce((s, v) => s + v.requirements.length, 0);
+  const totalApis = vms.reduce((s, v) => s + v.apiCalls.length, 0);
+  const totalEdge = vms.reduce((s, v) => s + v.edgeCases.length, 0);
+  const totalDeps = vms.reduce((s, v) => s + v.externalDependencies.length, 0);
+  const totalErrors = vms.reduce((s, v) => s + v.errorHandling.length, 0);
+  const named = vms.filter(v => v.name.trim()).length;
+
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat"><div class="stat-value" style="color:var(--purple)">${vms.length}</div><div class="stat-label">Screens</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--text)">${totalReqs}</div><div class="stat-label">Requirements</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--cyan)">${totalApis}</div><div class="stat-label">API Calls</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--amber)">${totalEdge}</div><div class="stat-label">Edge Cases</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--rose)">${totalErrors}</div><div class="stat-label">Error Handlers</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--green)">${named}</div><div class="stat-label">Named</div></div>
+  `;
+
+  // Update workflow steps
+  const ws1 = document.getElementById('ws1');
+  const ws2 = document.getElementById('ws2');
+  const ws3 = document.getElementById('ws3');
+  const ws4 = document.getElementById('ws4');
+  const hasHardening = totalEdge > 0 || totalDeps > 0 || totalErrors > 0;
+  ws1.className = 'workflow-step ' + (totalReqs > 0 ? 'done' : 'active');
+  ws2.className = 'workflow-step ' + (totalApis > 0 ? 'done' : (totalReqs > 0 ? 'active' : ''));
+  ws3.className = 'workflow-step ' + (hasHardening ? 'done' : (totalApis > 0 ? 'active' : ''));
+  ws4.className = 'workflow-step ' + (hasHardening && totalApis > 0 && totalReqs > 0 ? 'active' : '');
+}
+
+function renderVM(vm) {
+  const root = isRoot(vm);
+  const reqCount = vm.requirements.length;
+  const apiCount = vm.apiCalls.length;
+  const children = getChildren(vm.id);
+
+  // Parent options
+  const otherVMs = vms.filter(v => v.id !== vm.id);
+  let parentOptions = `<option value="-1" ${vm.parentId === null ? 'selected' : ''}>Root (no parent)</option>`;
+  for (const other of otherVMs) {
+    const selected = vm.parentId === other.id ? 'selected' : '';
+    parentOptions += `<option value="${other.id}" ${selected}>${esc(other.name || 'Unnamed')}</option>`;
+  }
+
+  let html = `<div class="vm-card ${root ? 'is-root' : ''}" data-vm-id="${vm.id}">`;
+
+  // Header
+  html += `<div class="vm-header" onclick="toggleVM(${vm.id}, event)">`;
+  html += `<button class="vm-toggle">${vm.collapsed ? '&#x25B6;' : '&#x25BC;'}</button>`;
+  html += `<input class="vm-name-input" value="${esc(vm.name)}" placeholder="Screen name..." oninput="renameVM(${vm.id}, this.value)" onclick="event.stopPropagation()">`;
+  html += `<div class="vm-badges">`;
+  if (root) html += `<span class="badge badge-root">Root</span>`;
+  else html += `<span class="badge badge-child">Child</span>`;
+  if (reqCount) html += `<span class="badge badge-count">${reqCount} req</span>`;
+  if (apiCount) html += `<span class="badge badge-count">${apiCount} api</span>`;
+  if (children.length) html += `<span class="badge badge-count">${children.length} children</span>`;
+  html += `</div>`;
+  html += `<select class="parent-select" onchange="setParent(${vm.id}, this.value)" onclick="event.stopPropagation()">${parentOptions}</select>`;
+  if (vms.length > 1) {
+    html += `<button class="vm-remove" onclick="removeVM(${vm.id}); event.stopPropagation()" title="Remove screen">&#x2715;</button>`;
+  }
+  html += `</div>`;
+
+  // Body
+  html += `<div class="vm-body ${vm.collapsed ? 'collapsed' : ''}">`;
+
+  // Requirements (full width)
+  html += `<div class="input-section-full">`;
+  html += `<div class="section-header"><span class="section-title"><span class="icon">&#x1F4CB;</span> Product Requirements</span><span class="section-count">${reqCount}</span></div>`;
+  html += `<div class="section-hint">What should this screen do? Write from the user's perspective.</div>`;
+  html += `<div class="req-list">`;
+  for (let i = 0; i < vm.requirements.length; i++) {
+    html += `<div class="req-item">`;
+    html += `<span class="req-bullet"></span>`;
+    html += `<textarea class="req-text" rows="1" oninput="updateReq(${vm.id}, ${i}, this.value); autoResize(this)">${esc(vm.requirements[i])}</textarea>`;
+    html += `<button class="item-remove" onclick="removeReq(${vm.id}, ${i})" title="Remove">&#x2715;</button>`;
+    html += `</div>`;
+  }
+  html += `</div>`;
+  html += `<input class="add-input" placeholder="+ Add a requirement... (press Enter)" onkeydown="addReqKey(event, ${vm.id}, this)">`;
+  html += `</div>`;
+
+  // Screenshots / Design Reference
+  const screenshotCount = vm.screenshots.length;
+  html += `<div class="input-section-full">`;
+  html += `<div class="section-header"><span class="section-title"><span class="icon">&#x1F3A8;</span> Design Reference</span><span class="section-count">${screenshotCount}</span></div>`;
+  html += `<div class="section-hint">Paste (Cmd+V) or drag screenshots from Figma.</div>`;
+  if (screenshotCount) {
+    html += `<div class="screenshot-grid">`;
+    for (let i = 0; i < vm.screenshots.length; i++) {
+      html += `<div class="screenshot-thumb">`;
+      html += `<img src="${vm.screenshots[i]}" onclick="openLightbox(this.src)" alt="Screenshot ${i + 1}">`;
+      html += `<button class="screenshot-remove" onclick="removeScreenshot(${vm.id}, ${i}); event.stopPropagation()" title="Remove">&#x2715;</button>`;
+      html += `</div>`;
+    }
+    html += `</div>`;
+  }
+  html += `<div class="screenshot-drop" data-vm-id="${vm.id}" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, ${vm.id})" onclick="triggerFileInput(${vm.id})">`;
+  html += `<span class="drop-icon">&#x1F4CE;</span>`;
+  html += `Drop images here, paste (Cmd+V), or click to browse`;
+  html += `</div>`;
+  html += `</div>`;
+
+  // API Calls
+  html += `<div class="input-section-full">`;
+  html += `<div class="section-header"><span class="section-title"><span class="icon">&#x1F310;</span> API Calls</span><span class="section-count">${apiCount}</span></div>`;
+  html += `<div class="section-hint">What HTTP endpoints does this screen call? (optional, for engineers)</div>`;
+  for (let i = 0; i < vm.apiCalls.length; i++) {
+    const api = vm.apiCalls[i];
+    html += `<div class="api-item">`;
+    html += `<div class="api-top">`;
+    html += `<input class="api-input endpoint" value="${esc(api.endpoint || '')}" placeholder="GET /v1/..." oninput="updateApi(${vm.id}, ${i}, 'endpoint', this.value)">`;
+    html += `<button class="item-remove" style="opacity:1" onclick="removeApi(${vm.id}, ${i})" title="Remove">&#x2715;</button>`;
+    html += `</div>`;
+    html += `<div class="api-labels">`;
+    html += `<input class="api-input trigger" value="${esc(api.trigger || '')}" placeholder="Trigger: e.g. onAppear, saveTapped" oninput="updateApi(${vm.id}, ${i}, 'trigger', this.value)">`;
+    html += `</div>`;
+    html += `</div>`;
+  }
+  html += `<input class="add-input mono" placeholder="+ Add API call... e.g. POST /v1/profiles/{id}/orders (press Enter)" onkeydown="addApiKey(event, ${vm.id}, this)">`;
+  html += `</div>`;
+
+  // Edge Cases
+  const edgeCount = vm.edgeCases.length;
+  html += `<div class="input-section-full">`;
+  html += `<div class="section-header"><span class="section-title"><span class="icon">&#x26A0;</span> Edge Cases</span><span class="section-count">${edgeCount}</span></div>`;
+  html += `<div class="section-hint">Boundary conditions, unusual inputs, race conditions, empty states, offline scenarios.</div>`;
+  html += `<div class="req-list">`;
+  for (let i = 0; i < vm.edgeCases.length; i++) {
+    html += `<div class="req-item">`;
+    html += `<span class="req-bullet" style="background:var(--amber)"></span>`;
+    html += `<textarea class="req-text" rows="1" oninput="updateEdgeCase(${vm.id}, ${i}, this.value); autoResize(this)">${esc(vm.edgeCases[i])}</textarea>`;
+    html += `<button class="item-remove" onclick="removeEdgeCase(${vm.id}, ${i})" title="Remove">&#x2715;</button>`;
+    html += `</div>`;
+  }
+  html += `</div>`;
+  html += `<input class="add-input" placeholder="+ Add edge case... (press Enter)" onkeydown="addEdgeCaseKey(event, ${vm.id}, this)">`;
+  html += `</div>`;
+
+  // External Dependencies
+  const depCount = vm.externalDependencies.length;
+  html += `<div class="input-section-full">`;
+  html += `<div class="section-header"><span class="section-title"><span class="icon">&#x1F517;</span> External Dependencies</span><span class="section-count">${depCount}</span></div>`;
+  html += `<div class="section-hint">Services, SDKs, permissions, feature flags, or shared state this screen depends on.</div>`;
+  for (let i = 0; i < vm.externalDependencies.length; i++) {
+    const dep = vm.externalDependencies[i];
+    html += `<div class="api-item">`;
+    html += `<div class="api-top">`;
+    html += `<input class="api-input endpoint" value="${esc(dep.name || '')}" placeholder="Dependency name (e.g. LocationService)" oninput="updateDep(${vm.id}, ${i}, 'name', this.value)">`;
+    html += `<button class="item-remove" style="opacity:1" onclick="removeDep(${vm.id}, ${i})" title="Remove">&#x2715;</button>`;
+    html += `</div>`;
+    html += `<div class="api-labels">`;
+    html += `<input class="api-input trigger" value="${esc(dep.type || '')}" placeholder="Type: e.g. SDK, permission, feature flag, shared state" oninput="updateDep(${vm.id}, ${i}, 'type', this.value)">`;
+    html += `</div>`;
+    html += `</div>`;
+  }
+  html += `<input class="add-input" placeholder="+ Add dependency... e.g. Camera permission, FeatureFlag.acquiringEnabled (press Enter)" onkeydown="addDepKey(event, ${vm.id}, this)">`;
+  html += `</div>`;
+
+  // Error Handling
+  const errCount = vm.errorHandling.length;
+  html += `<div class="input-section-full">`;
+  html += `<div class="section-header"><span class="section-title"><span class="icon">&#x1F6A8;</span> Error Handling</span><span class="section-count">${errCount}</span></div>`;
+  html += `<div class="section-hint">What errors can occur and how should each be handled? (retry, fallback, inline message, toast, full-screen error)</div>`;
+  for (let i = 0; i < vm.errorHandling.length; i++) {
+    const err = vm.errorHandling[i];
+    html += `<div class="api-item">`;
+    html += `<div class="api-top">`;
+    html += `<input class="api-input endpoint" value="${esc(err.error || '')}" placeholder="Error scenario (e.g. Network timeout, Invalid IBAN)" oninput="updateErrorHandler(${vm.id}, ${i}, 'error', this.value)">`;
+    html += `<button class="item-remove" style="opacity:1" onclick="removeErrorHandler(${vm.id}, ${i})" title="Remove">&#x2715;</button>`;
+    html += `</div>`;
+    html += `<div class="api-labels">`;
+    html += `<input class="api-input trigger" value="${esc(err.handling || '')}" placeholder="Handling: e.g. Show retry button, Inline validation error, Toast" oninput="updateErrorHandler(${vm.id}, ${i}, 'handling', this.value)">`;
+    html += `</div>`;
+    html += `</div>`;
+  }
+  html += `<input class="add-input" placeholder="+ Add error scenario... (press Enter)" onkeydown="addErrorHandlerKey(event, ${vm.id}, this)">`;
+  html += `</div>`;
+
+  html += `</div>`; // vm-body
+  html += `</div>`; // vm-card
+  return html;
+}
+
+function render() {
+  // Sort: roots first, then by creation order
+  const sorted = [...vms].sort((a, b) => {
+    if (a.parentId === null && b.parentId !== null) return -1;
+    if (a.parentId !== null && b.parentId === null) return 1;
+    return a.id - b.id;
+  });
+  document.getElementById('vmList').innerHTML = sorted.map(renderVM).join('');
+  renderStats();
+
+  // Auto-resize all textareas
+  document.querySelectorAll('.req-text').forEach(autoResize);
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+// ---------------------------------------------------------------
+// Editing
+// ---------------------------------------------------------------
+function addVM() {
+  const vm = createVM('', null);
+  // If there's exactly one root, default new VMs as children of root
+  const roots = vms.filter(v => v.parentId === null);
+  if (roots.length === 1) {
+    vm.parentId = roots[0].id;
+  }
+  vms.push(vm);
+  render();
+  // Focus the new name input
+  const cards = document.querySelectorAll('.vm-card');
+  const last = cards[cards.length - 1];
+  if (last) last.querySelector('.vm-name-input').focus();
+}
+
+function removeVM(id) {
+  // Reparent children to the removed VM's parent
+  const vm = getVM(id);
+  if (!vm) return;
+  vms.filter(v => v.parentId === id).forEach(v => v.parentId = vm.parentId);
+  vms = vms.filter(v => v.id !== id);
+  render();
+}
+
+function renameVM(id, name) {
+  const vm = getVM(id);
+  if (vm) vm.name = name;
+  // Don't re-render, just update stats
+  renderStats();
+}
+
+function setParent(id, parentIdStr) {
+  const vm = getVM(id);
+  if (!vm) return;
+  const pid = parseInt(parentIdStr);
+  vm.parentId = pid === -1 ? null : pid;
+  render();
+}
+
+function toggleVM(id, event) {
+  if (event.target.tagName === 'INPUT' || event.target.tagName === 'SELECT' || event.target.tagName === 'BUTTON') return;
+  const vm = getVM(id);
+  if (vm) vm.collapsed = !vm.collapsed;
+  render();
+}
+
+function updateReq(vmId, index, value) {
+  const vm = getVM(vmId);
+  if (vm) vm.requirements[index] = value;
+}
+
+function removeReq(vmId, index) {
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.requirements.splice(index, 1);
+  render();
+}
+
+function addReqKey(event, vmId, input) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  const val = input.value.trim();
+  if (!val) return;
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.requirements.push(val);
+  input.value = '';
+  render();
+  // Re-focus the add input
+  const card = document.querySelector(`[data-vm-id="${vmId}"]`);
+  if (card) {
+    const inputs = card.querySelectorAll('.add-input');
+    if (inputs[0]) inputs[0].focus();
+  }
+}
+
+function updateApi(vmId, index, field, value) {
+  const vm = getVM(vmId);
+  if (vm && vm.apiCalls[index]) vm.apiCalls[index][field] = value;
+}
+
+function removeApi(vmId, index) {
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.apiCalls.splice(index, 1);
+  render();
+}
+
+function addApiKey(event, vmId, input) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  const val = input.value.trim();
+  if (!val) return;
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.apiCalls.push({ endpoint: val, trigger: '' });
+  input.value = '';
+  render();
+  const card = document.querySelector(`[data-vm-id="${vmId}"]`);
+  if (card) {
+    const inputs = card.querySelectorAll('.add-input');
+    if (inputs[1]) inputs[1].focus();
+  }
+}
+
+// Edge Cases CRUD
+function updateEdgeCase(vmId, index, value) {
+  const vm = getVM(vmId);
+  if (vm) vm.edgeCases[index] = value;
+}
+
+function removeEdgeCase(vmId, index) {
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.edgeCases.splice(index, 1);
+  render();
+}
+
+function addEdgeCaseKey(event, vmId, input) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  const val = input.value.trim();
+  if (!val) return;
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.edgeCases.push(val);
+  input.value = '';
+  render();
+}
+
+// External Dependencies CRUD
+function updateDep(vmId, index, field, value) {
+  const vm = getVM(vmId);
+  if (vm && vm.externalDependencies[index]) vm.externalDependencies[index][field] = value;
+}
+
+function removeDep(vmId, index) {
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.externalDependencies.splice(index, 1);
+  render();
+}
+
+function addDepKey(event, vmId, input) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  const val = input.value.trim();
+  if (!val) return;
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.externalDependencies.push({ name: val, type: '' });
+  input.value = '';
+  render();
+}
+
+// Error Handling CRUD
+function updateErrorHandler(vmId, index, field, value) {
+  const vm = getVM(vmId);
+  if (vm && vm.errorHandling[index]) vm.errorHandling[index][field] = value;
+}
+
+function removeErrorHandler(vmId, index) {
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.errorHandling.splice(index, 1);
+  render();
+}
+
+function addErrorHandlerKey(event, vmId, input) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  const val = input.value.trim();
+  if (!val) return;
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.errorHandling.push({ error: val, handling: '' });
+  input.value = '';
+  render();
+}
+
+function updateTitle() {
+  const name = document.getElementById('featureName').value;
+  document.getElementById('featureTitle').textContent = name;
+}
+
+// ---------------------------------------------------------------
+// Build tree structure from flat VM list
+// ---------------------------------------------------------------
+function buildTree() {
+  const featureName = document.getElementById('featureName').value.trim();
+  const outputPath = document.getElementById('outputPath').value.trim();
+
+  function buildNode(vm) {
+    const children = vms.filter(v => v.parentId === vm.id);
+    const node = {
+      name: vm.name || 'Unnamed',
+      requirements: vm.requirements.filter(r => r.trim()),
+    };
+    if (vm.screenshots.length) {
+      node.screenshots = vm.screenshots;
+    }
+    if (vm.apiCalls.length) {
+      node.apiCalls = vm.apiCalls.filter(a => a.endpoint?.trim()).map(a => ({
+        endpoint: a.endpoint.trim(),
+        trigger: a.trigger?.trim() || ''
+      }));
+    }
+    if (vm.edgeCases.length) {
+      node.edgeCases = vm.edgeCases.filter(e => e.trim());
+    }
+    if (vm.externalDependencies.length) {
+      node.externalDependencies = vm.externalDependencies.filter(d => d.name?.trim()).map(d => ({
+        name: d.name.trim(),
+        type: d.type?.trim() || ''
+      }));
+    }
+    if (vm.errorHandling.length) {
+      node.errorHandling = vm.errorHandling.filter(e => e.error?.trim()).map(e => ({
+        error: e.error.trim(),
+        handling: e.handling?.trim() || ''
+      }));
+    }
+    if (children.length) {
+      node.children = children.map(buildNode);
+    } else {
+      node.children = [];
+    }
+    return node;
+  }
+
+  const roots = vms.filter(v => v.parentId === null);
+  const root = roots.length ? buildNode(roots[0]) : { name: 'Root', requirements: [], children: [] };
+
+  // Orphans (parentId points to deleted VM) become root children
+  const orphans = vms.filter(v => v.parentId !== null && !vms.find(p => p.id === v.parentId));
+  for (const o of orphans) {
+    root.children.push(buildNode(o));
+  }
+
+  return {
+    featureName: featureName || '__FEATURE_NAME__',
+    outputPath: outputPath || '__OUTPUT_PATH__',
+    root
+  };
+}
+
+// ---------------------------------------------------------------
+// Generate prompt
+// ---------------------------------------------------------------
+function generatePrompt() {
+  const tree = buildTree();
+  const totalReqs = vms.reduce((s, v) => s + v.requirements.length, 0);
+  if (totalReqs === 0) {
+    showToast('Add some requirements first');
+    return;
+  }
+
+  const treeJson = JSON.stringify(tree, null, 2);
+
+  const BT = String.fromCharCode(96);
+  const BT3 = BT + BT + BT;
+  const prompt = 'I have a requirements spec for a new @StateReducer feature called "' + tree.featureName + '".\n\n' +
+    'The spec defines screens with product requirements, edge cases, external dependencies, error handling, and (optionally) API calls. Your job is to propose the full @StateReducer view model architecture that implements these requirements.\n\n' +
+    'IMPORTANT: Use the ' + BT + '/feature-scaffold' + BT + ' skill (SKILL.md) to generate all code. Follow its Generation Rules exactly for ViewModel structure, parent-child wiring, IntegratedAction handling, and naming conventions.\n\n' +
+    'For each screen, determine:\n' +
+    '- **State properties** needed to implement the requirements\n' +
+    '- **ViewActions** (user interactions from the requirements)\n' +
+    '- **OutputActions** (signals sent to the parent VM)\n' +
+    '- **LocalActions** (internal actions from API responses, timers, etc.)\n' +
+    '- **Dependencies** (use cases, services needed for API calls and business logic)\n' +
+    '- **Ownership type**: ' + BT + 'let' + BT + ' + ' + BT + 'onAppear' + BT + ' (Born Ready) for always-present children, ' + BT + 'optional' + BT + ' + ' + BT + 'deferred' + BT + ' (Arrives Later) for API-loaded children, ' + BT + 'optional' + BT + ' + ' + BT + 'lazy' + BT + ' (On Demand) for user-triggered children\n' +
+    '- **Navigation**: which screens are push destinations vs sheet presentations\n' +
+    '- **API call wiring**: which action triggers the call, which local action handles the result\n' +
+    '- **Edge case handling**: how each edge case maps to state checks, guard clauses, or validation logic\n' +
+    '- **Error handling**: how each error scenario maps to LocalActions, state properties (e.g. errorMessage: String?), and UI presentation (retry, toast, inline)\n' +
+    '- **External dependencies**: which ' + BT + '@Dependency' + BT + ' properties are needed (feature flags, permissions, shared services)\n\n' +
+    'REQUIREMENTS SPEC:\n' + BT3 + 'json\n' + treeJson + '\n' + BT3 + '\n\n' +
+    'Output a complete JSON tree in the vm_tree format with all fields populated, then generate all Swift code using the ' + BT + '/feature-scaffold' + BT + ' skill Generation Rules.\n\n' +
+    'Also generate the HTML preview:\n\n' +
+    BT3 + '\n' +
+    "cat <<'EOF' > /tmp/vm_tree_" + tree.featureName.toLowerCase() + '.json\n' +
+    '<the complete JSON tree>\n' +
+    'EOF\n' +
+    'python3 skill-catalog/skills/feature-scaffold/vm_tree_preview.py /tmp/vm_tree_' + tree.featureName.toLowerCase() + '.json ~/Desktop/vm-tree-' + tree.featureName + '.html\n' +
+    'open ~/Desktop/vm-tree-' + tree.featureName + '.html\n' +
+    BT3;
+
+  navigator.clipboard.writeText(prompt).then(() => {
+    showToast('Prompt copied! Paste it into Claude Code');
+  });
+}
+
+// ---------------------------------------------------------------
+// Preview tree -- enrich + open editor in new tab
+// ---------------------------------------------------------------
+function enrichNode(node, isRoot) {
+  const enriched = {
+    name: node.name || 'Unnamed',
+    requirements: node.requirements || [],
+    state: { properties: {} },
+    viewActions: ['onAppear'],
+    outputActions: [],
+    localActions: [],
+    dependencies: [],
+    children: []
+  };
+
+  if (!isRoot) {
+    enriched.outputActions.push('didFinish');
+  }
+
+  // Infer from requirements text
+  const reqText = (node.requirements || []).join(' ').toLowerCase();
+
+  if (/list|items|collection|table/.test(reqText)) {
+    enriched.state.properties['items'] = '[Item]';
+    enriched.state.properties['isLoading'] = 'Bool';
+    enriched.localActions.push('dataLoaded([Item])');
+  }
+  if (/form|input|field|enter|fill|edit/.test(reqText)) {
+    enriched.state.properties['isValid'] = 'Bool';
+    enriched.viewActions.push('submitTapped');
+  }
+  if (/search|filter|query/.test(reqText)) {
+    enriched.state.properties['searchText'] = 'String';
+    enriched.viewActions.push('searchTextChanged(String)');
+  }
+  if (/select|pick|choose|currency|country/.test(reqText)) {
+    enriched.viewActions.push('itemSelected');
+    enriched.outputActions.push('didSelect');
+  }
+  if (/loading|spinner|progress/.test(reqText)) {
+    enriched.state.properties['isLoading'] = 'Bool';
+  }
+  if (/error|fail|retry/.test(reqText)) {
+    enriched.state.properties['errorMessage'] = 'String?';
+    enriched.viewActions.push('retryTapped');
+    enriched.localActions.push('handleError(Error)');
+  }
+  if (/success|confirm|done|complete/.test(reqText)) {
+    enriched.outputActions.push('didComplete');
+  }
+  if (/save|create|submit|send/.test(reqText)) {
+    enriched.viewActions.push('saveTapped');
+    enriched.localActions.push('saveSucceeded');
+    enriched.localActions.push('saveFailed(Error)');
+  }
+  if (/delete|remove/.test(reqText)) {
+    enriched.viewActions.push('deleteTapped');
+    enriched.localActions.push('deleteConfirmed');
+  }
+  if (/navigate|push|next|continue/.test(reqText)) {
+    enriched.viewActions.push('continueTapped');
+  }
+
+  // Infer from API calls
+  const apiCalls = node.apiCalls || [];
+  if (apiCalls.length) {
+    enriched.state.properties['isLoading'] = 'Bool';
+    enriched.state.properties['errorMessage'] = 'String?';
+    enriched.apiCalls = apiCalls.map(a => ({
+      method: a.endpoint || '',
+      trigger: a.trigger || 'onAppear',
+      onResult: 'dataLoaded'
+    }));
+    for (const api of apiCalls) {
+      const endpoint = (api.endpoint || '').toUpperCase();
+      if (/^GET/.test(endpoint) || /^\//.test(api.endpoint || '')) {
+        enriched.dependencies.push({ name: 'apiService', type: 'APIServiceProtocol' });
+        break;
+      }
+      if (/^POST|^PUT|^PATCH|^DELETE/.test(endpoint)) {
+        enriched.dependencies.push({ name: 'apiService', type: 'APIServiceProtocol' });
+        break;
+      }
+    }
+    if (!enriched.dependencies.length && apiCalls.length) {
+      enriched.dependencies.push({ name: 'apiService', type: 'APIServiceProtocol' });
+    }
+  }
+
+  // Infer from edge cases
+  const edgeCases = node.edgeCases || [];
+  if (edgeCases.length) {
+    const edgeText = edgeCases.join(' ').toLowerCase();
+    if (/empty|no data|no items|no results/.test(edgeText)) {
+      enriched.state.properties['isEmpty'] = 'Bool';
+    }
+    if (/offline|network|connectivity/.test(edgeText)) {
+      enriched.state.properties['errorMessage'] = 'String?';
+      if (!enriched.viewActions.includes('retryTapped')) enriched.viewActions.push('retryTapped');
+    }
+  }
+
+  // Infer from error handling
+  const errors = node.errorHandling || [];
+  if (errors.length) {
+    enriched.state.properties['errorMessage'] = 'String?';
+    for (const err of errors) {
+      const handling = (err.handling || '').toLowerCase();
+      if (/retry/.test(handling) && !enriched.viewActions.includes('retryTapped')) {
+        enriched.viewActions.push('retryTapped');
+      }
+    }
+  }
+
+  // Infer from external dependencies
+  const extDeps = node.externalDependencies || [];
+  for (const dep of extDeps) {
+    const name = dep.name || '';
+    const type = dep.type || '';
+    const camelName = name.charAt(0).toLowerCase() + name.slice(1).replace(/\s+/g, '');
+    const pascalType = name.replace(/\s+/g, '') + (type ? 'Protocol' : '');
+    enriched.dependencies.push({ name: camelName, type: pascalType });
+  }
+
+  // Deduplicate
+  enriched.viewActions = [...new Set(enriched.viewActions)];
+  enriched.outputActions = [...new Set(enriched.outputActions)];
+  enriched.localActions = [...new Set(enriched.localActions)];
+
+  // Recurse children
+  const children = node.children || [];
+  enriched.children = children.map(c => {
+    const child = enrichNode(c, false);
+    child.ownership = 'optional';
+    child.subscription = 'lazy';
+    // If child has API calls, it likely arrives after data loads
+    if ((c.apiCalls || []).length) {
+      child.subscription = 'deferred';
+    }
+    return child;
+  });
+
+  // Root gets navigation if it has children
+  if (isRoot && enriched.children.length) {
+    enriched.navigation = {
+      pushDestinations: enriched.children.map(c => c.name),
+      sheetDestinations: []
+    };
+  }
+
+  return enriched;
+}
+
+function enrichTree(tree) {
+  return {
+    featureName: tree.featureName,
+    outputPath: tree.outputPath,
+    root: enrichNode(tree.root, true)
+  };
+}
+
+function previewTree() {
+  const tree = buildTree();
+  const totalReqs = vms.reduce((s, v) => s + v.requirements.length, 0);
+  if (totalReqs === 0 && vms.every(v => !v.name.trim())) {
+    showToast('Add some screens and requirements first');
+    return;
+  }
+
+  const enriched = enrichTree(tree);
+  const treeJson = JSON.stringify(enriched, null, 2);
+  const featureName = enriched.featureName || 'Feature';
+  const now = new Date().toLocaleString();
+
+  // Open a new tab and write the preview editor HTML into it
+  const w = window.open('', '_blank');
+  if (!w) {
+    showToast('Popup blocked -- allow popups for this page');
+    return;
+  }
+
+  w.document.write(generatePreviewHTML(enriched, treeJson, featureName, now));
+  w.document.close();
+  showToast('Preview opened in new tab');
+}
+
+function generatePreviewHTML(tree, treeJson, featureName, now) {
+  const outputPath = tree.outputPath || '';
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VM Tree Editor &mdash; ${esc(featureName)}</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css">
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #242836; --surface3: #2e3345;
+    --border: rgba(255,255,255,0.06); --border-hover: rgba(255,255,255,0.12);
+    --text: #e2e4e9; --text-dim: #7a8194; --text-bright: #ffffff;
+    --green: #34d399; --green-bg: rgba(52,211,153,0.08); --green-border: rgba(52,211,153,0.20);
+    --blue: #60a5fa; --blue-bg: rgba(96,165,250,0.08); --blue-border: rgba(96,165,250,0.20);
+    --amber: #fbbf24; --amber-bg: rgba(251,191,36,0.08); --amber-border: rgba(251,191,36,0.20);
+    --purple: #a78bfa; --purple-bg: rgba(167,139,250,0.08); --purple-border: rgba(167,139,250,0.20);
+    --rose: #fb7185; --rose-bg: rgba(251,113,133,0.08); --rose-border: rgba(251,113,133,0.20);
+    --cyan: #22d3ee; --cyan-bg: rgba(34,211,238,0.08); --cyan-border: rgba(34,211,238,0.20);
+    --red: #ef4444; --red-bg: rgba(239,68,68,0.08); --red-border: rgba(239,68,68,0.25);
+    --radius: 10px; --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    padding: 2.5rem 3.5rem; max-width: 1600px; margin: 0 auto;
+  }
+  .page-header { margin-bottom: 2rem; }
+  .page-header h1 { font-size: 2rem; font-weight: 700; color: var(--text-bright); letter-spacing: -0.02em; }
+  .page-header h1 span { background: linear-gradient(135deg, var(--green), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .page-subtitle { color: var(--text-dim); font-size: 0.95rem; margin-top: 0.35rem; }
+  .page-subtitle code { background: var(--surface2); padding: 0.15rem 0.5rem; border-radius: 4px; font-family: 'Geist Mono', monospace; font-size: 0.88rem; color: var(--text); }
+  .draft-banner { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: var(--radius); padding: 0.6rem 1rem; margin-bottom: 1.5rem; font-size: 0.82rem; color: var(--amber); font-weight: 500; }
+  .stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.85rem 1.25rem; min-width: 120px; flex: 1; }
+  .stat-value { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.25rem; }
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.75rem; padding: 0.85rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.9rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.45rem; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .toolbar { display: flex; gap: 0.65rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .toolbar button, .toolbar .btn { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.88rem; padding: 0.55rem 1.1rem; cursor: pointer; transition: all 0.15s ease; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
+  .toolbar button:hover, .toolbar .btn:hover { background: var(--surface2); border-color: var(--border-hover); }
+  .toolbar .btn-primary { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+  .toolbar .btn-primary:hover { background: rgba(52,211,153,0.15); }
+  .toolbar .btn-export { background: var(--purple-bg); border-color: var(--purple-border); color: var(--purple); }
+  .toolbar .btn-export:hover { background: rgba(167,139,250,0.15); }
+  .toolbar .separator { width: 1px; background: var(--border); margin: 0 0.25rem; }
+  .tree-node { position: relative; margin-left: 0; }
+  .tree-node .tree-node { margin-left: 2.75rem; }
+  .children-container { position: relative; }
+  .children > .tree-node { position: relative; }
+  .children > .tree-node::before { content: ''; position: absolute; left: -1.5rem; top: 0; bottom: 50%; width: 2px; background: var(--border-hover); }
+  .children > .tree-node::after { content: ''; position: absolute; left: -1.5rem; top: 50%; width: 1.25rem; height: 2px; background: var(--border-hover); }
+  .children > .tree-node:first-child::before { top: 50%; }
+  .children > .tree-node:last-child::before { bottom: 50%; }
+  .children { position: relative; }
+  .children::before { content: ''; position: absolute; left: calc(2.75rem - 1.5rem); top: 0; bottom: 0; width: 2px; background: var(--border-hover); }
+  .node-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 0.75rem; overflow: hidden; transition: border-color 0.15s ease; }
+  .node-card:hover { border-color: var(--border-hover); }
+  .node-card.own-root { border-left: 4px solid var(--purple); }
+  .node-card.own-born-ready { border-left: 4px solid var(--green); }
+  .node-card.own-arrives-later { border-left: 4px solid var(--blue); }
+  .node-card.own-on-demand { border-left: 4px solid var(--amber); }
+  .card-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.1rem; gap: 0.6rem; }
+  .header-left { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; min-width: 0; }
+  .header-right { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+  .node-name { font-weight: 600; font-size: 1.05rem; color: var(--text-bright); font-family: 'Geist Mono', monospace; }
+  .node-name-input { font-weight: 600; font-size: 1.05rem; color: var(--text-bright); font-family: 'Geist Mono', monospace; background: var(--surface2); border: 1px solid var(--border-hover); border-radius: 4px; padding: 0.2rem 0.5rem; outline: none; width: auto; min-width: 140px; }
+  .node-name-input:focus { border-color: var(--purple); }
+  .badge { font-size: 0.7rem; font-weight: 600; padding: 0.18rem 0.55rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+  .role-root { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .role-parent { background: var(--cyan-bg); color: var(--cyan); border: 1px solid var(--cyan-border); }
+  .role-leaf { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+  .ownership-select { font-size: 0.75rem; font-weight: 600; padding: 0.18rem 0.5rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; outline: none; border: 1px solid; appearance: none; -webkit-appearance: none; }
+  .ownership-select.born-ready { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+  .ownership-select.arrives-later { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-border); }
+  .ownership-select.on-demand { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+  .toggle-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 0.85rem; padding: 0.3rem 0.4rem; border-radius: 4px; transition: all 0.15s ease; line-height: 1; }
+  .toggle-btn:hover { background: var(--surface2); color: var(--text); }
+  .icon-btn { background: none; border: 1px solid transparent; color: var(--text-dim); cursor: pointer; font-size: 0.82rem; padding: 0.2rem 0.45rem; border-radius: 4px; transition: all 0.15s ease; line-height: 1; }
+  .icon-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--border); }
+  .icon-btn.danger:hover { color: var(--red); background: var(--red-bg); border-color: var(--red-border); }
+  .icon-btn.add { color: var(--green); }
+  .icon-btn.add:hover { background: var(--green-bg); border-color: var(--green-border); }
+  .card-details { padding: 0.75rem 1.1rem 1rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.5rem; }
+  .card-details .detail-left { grid-column: 1; }
+  .card-details .detail-right { grid-column: 2; }
+  .card-details .detail-full { grid-column: 1 / -1; }
+  .section { margin-bottom: 0.5rem; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+  .section-title { font-size: 0.78rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+  .section-count { font-family: 'Geist Mono', monospace; font-size: 0.78rem; font-weight: 700; color: var(--text-dim); }
+  .state-table { width: 100%; border-collapse: collapse; }
+  .state-table tr { border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .state-table tr:last-child { border-bottom: none; }
+  .state-table tr:hover { background: rgba(255,255,255,0.02); }
+  .state-table tr:hover .remove-btn { opacity: 1; }
+  .state-table td { padding: 0.3rem 0.15rem; vertical-align: middle; }
+  .state-table .state-name-cell { font-family: 'Geist Mono', monospace; font-size: 0.88rem; color: var(--text); font-weight: 500; width: 45%; }
+  .state-table .state-type-cell { font-family: 'Geist Mono', monospace; font-size: 0.85rem; color: var(--amber); width: 50%; }
+  .state-table .state-remove-cell { width: 5%; text-align: right; }
+  .editable { font-family: 'Geist Mono', monospace; font-size: 0.85rem; background: transparent; border: 1px solid transparent; border-radius: 3px; padding: 0.12rem 0.4rem; color: var(--text); outline: none; transition: all 0.15s ease; width: 100%; }
+  .editable:hover { border-color: var(--border-hover); background: var(--surface2); }
+  .editable:focus { border-color: var(--purple); background: var(--surface2); }
+  .editable.prop-name-input { color: var(--text); font-size: 0.88rem; font-weight: 500; }
+  .editable.prop-type-input { color: var(--amber); }
+  .editable.dep-type-input { color: var(--purple); }
+  .remove-btn { opacity: 0; transition: opacity 0.15s ease; }
+  .action-list-v { display: flex; flex-direction: column; gap: 0.15rem; }
+  .action-row { display: flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.35rem; border-radius: 4px; transition: background 0.1s; }
+  .action-row:hover { background: rgba(255,255,255,0.02); }
+  .action-row:hover .remove-tag { opacity: 1; }
+  .action-row .action-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .action-row .action-name { font-family: 'Geist Mono', monospace; font-size: 0.85rem; color: var(--text); flex: 1; }
+  .action-row .remove-tag { opacity: 0; cursor: pointer; font-size: 0.75rem; color: var(--text-dim); transition: opacity 0.15s ease; padding: 0.1rem 0.2rem; border-radius: 3px; }
+  .action-row .remove-tag:hover { color: var(--red); background: var(--red-bg); }
+  .action-row.act-output .action-name { color: var(--green); font-weight: 500; }
+  .action-row.act-local .action-name { color: var(--blue); }
+  .dep-row { display: flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .dep-row:last-of-type { border-bottom: none; }
+  .dep-row:hover .remove-btn { opacity: 1; }
+  .dep-at-label { font-size: 0.72rem; color: var(--text-dim); font-family: 'Geist Mono', monospace; flex-shrink: 0; }
+  .api-row { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.35rem 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.03); border-radius: 4px; transition: background 0.1s; }
+  .api-row:last-of-type { border-bottom: none; }
+  .api-row:hover { background: rgba(255,255,255,0.02); }
+  .api-row:hover .remove-btn { opacity: 1; }
+  .api-method { font-family: 'Geist Mono', monospace; font-size: 0.82rem; color: var(--rose); font-weight: 500; }
+  .api-detail { display: flex; gap: 0.75rem; font-size: 0.7rem; color: var(--text-dim); }
+  .api-detail-label { font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.6rem; color: var(--text-dim); flex-shrink: 0; }
+  .api-detail-value { font-family: 'Geist Mono', monospace; font-size: 0.72rem; }
+  .api-trigger { color: var(--amber); }
+  .api-result { color: var(--blue); }
+  .api-endpoint { font-family: 'Geist Mono', monospace; font-size: 0.7rem; color: var(--cyan); background: var(--cyan-bg); border: 1px solid var(--cyan-border); border-radius: 4px; padding: 0.15rem 0.45rem; margin-top: 0.1rem; display: inline-block; }
+  .req-list { display: flex; flex-direction: column; gap: 0.1rem; }
+  .req-row { display: flex; align-items: flex-start; gap: 0.4rem; padding: 0.2rem 0.35rem; border-radius: 4px; transition: background 0.1s; }
+  .req-row:hover { background: rgba(255,255,255,0.02); }
+  .req-row:hover .remove-tag { opacity: 1; }
+  .req-bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); flex-shrink: 0; margin-top: 0.45rem; opacity: 0.6; }
+  .req-text { font-size: 0.82rem; color: var(--text); line-height: 1.5; flex: 1; }
+  .req-row .remove-tag { opacity: 0; cursor: pointer; font-size: 0.75rem; color: var(--text-dim); transition: opacity 0.15s ease; padding: 0.1rem 0.2rem; border-radius: 3px; flex-shrink: 0; }
+  .req-row .remove-tag:hover { color: var(--red); background: var(--red-bg); }
+  .inline-add { font-size: 0.82rem; font-family: 'Geist Mono', monospace; background: transparent; border: 1px dashed var(--border); border-radius: 4px; padding: 0.15rem 0.5rem; color: var(--text-dim); outline: none; min-width: 100px; transition: all 0.15s ease; width: 100%; margin-top: 0.25rem; }
+  .inline-add::placeholder { color: var(--text-dim); opacity: 0.5; }
+  .inline-add:focus { border-color: var(--purple); border-style: solid; color: var(--text); background: var(--surface2); }
+  .nav-group { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem; flex-wrap: wrap; }
+  .nav-label { font-size: 0.72rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.04em; min-width: 40px; }
+  .nav-tag { font-size: 0.8rem; font-family: 'Geist Mono', monospace; padding: 0.18rem 0.55rem; border-radius: 5px; white-space: nowrap; }
+  .nav-push { background: var(--cyan-bg); color: var(--cyan); border: 1px solid var(--cyan-border); }
+  .nav-sheet { background: var(--rose-bg); color: var(--rose); border: 1px solid var(--rose-border); }
+  .empty-state { color: var(--text-dim); font-size: 0.88rem; font-style: italic; padding: 0.25rem 0; }
+  .add-child-area { margin: 0.5rem 0 0.75rem 2.75rem; }
+  .add-child-btn { background: transparent; border: 1px dashed var(--border); border-radius: var(--radius); color: var(--text-dim); font-size: 0.88rem; padding: 0.55rem 1rem; cursor: pointer; transition: all 0.15s ease; width: 100%; text-align: left; }
+  .add-child-btn:hover { border-color: var(--green-border); color: var(--green); background: var(--green-bg); }
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
+  .modal-overlay.visible { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; max-width: 700px; width: 90%; max-height: 80vh; display: flex; flex-direction: column; }
+  .modal h2 { font-size: 1.1rem; color: var(--text-bright); margin-bottom: 0.75rem; }
+  .modal textarea { font-family: 'Geist Mono', monospace; font-size: 0.75rem; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem; flex: 1; min-height: 300px; resize: vertical; outline: none; }
+  .modal textarea:focus { border-color: var(--purple); }
+  .modal-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; justify-content: flex-end; }
+  .modal-actions button { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 0.8rem; padding: 0.4rem 1rem; cursor: pointer; }
+  .modal-actions button:hover { background: var(--surface3); }
+  .modal-actions .btn-copy { color: var(--green); border-color: var(--green-border); }
+  .modal-actions .btn-copy:hover { background: var(--green-bg); }
+  .modal-actions .btn-save { color: var(--purple); border-color: var(--purple-border); }
+  .modal-actions .btn-save:hover { background: var(--purple-bg); }
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); padding: 0.6rem 1.2rem; border-radius: var(--radius); font-size: 0.82rem; font-weight: 500; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+  .toast.visible { opacity: 1; }
+  .page-footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.75rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+  @media (max-width: 768px) { body { padding: 1rem; } .tree-node .tree-node { margin-left: 1rem; } }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1><span>${esc(featureName)}</span> &mdash; ViewModel Tree Editor</h1>
+  <div class="page-subtitle">${outputPath ? 'Output: <code>' + esc(outputPath) + '</code> &mdash; ' : ''}Preview generated ${esc(now)}</div>
+</div>
+<div class="draft-banner">Draft preview &mdash; auto-inferred from requirements. Edit here, then Export JSON to refine with Claude Code or feed back into the requirements page.</div>
+<div class="stats" id="statsBar"></div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div><span>Root</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div><span>Born Ready</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div><span>Arrives Later</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div><span>On Demand</span></div>
+</div>
+<div class="toolbar">
+  <button onclick="expandAll()">Expand All</button>
+  <button onclick="collapseAll()">Collapse All</button>
+  <button onclick="toggleAllDetails(true)">Show Details</button>
+  <button onclick="toggleAllDetails(false)">Hide Details</button>
+  <div class="separator"></div>
+  <button class="btn btn-primary" onclick="showExportModal()">Export JSON</button>
+  <button class="btn btn-export" onclick="copyJson()">Copy JSON</button>
+</div>
+<div class="tree-container" id="treeContainer"></div>
+<div class="page-footer">
+  <span>Composable ViewModel Tree Editor (Draft Preview)</span>
+  <span>@StateReducer &middot; Wise iOS</span>
+</div>
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <h2>Exported JSON Tree</h2>
+    <textarea id="exportTextarea" readonly></textarea>
+    <div class="modal-actions">
+      <button onclick="closeExportModal()">Close</button>
+      <button class="btn-copy" onclick="copyFromModal()">Copy to Clipboard</button>
+      <button class="btn-save" onclick="downloadJson()">Download .json</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">Copied to clipboard</div>
+<script>
+const treeData = ${treeJson};
+let nodeIdCounter = 0;
+function assignIds(node) { node._id = nodeIdCounter++; (node.children || []).forEach(assignIds); }
+assignIds(treeData.root || treeData);
+function getRoot() { return treeData.root || treeData; }
+function findNode(id, node) { if (!node) node = getRoot(); if (node._id === id) return node; for (const c of (node.children || [])) { const f = findNode(id, c); if (f) return f; } return null; }
+function findParent(id, node, parent) { if (!node) node = getRoot(); if (node._id === id) return parent; for (const c of (node.children || [])) { const f = findParent(id, c, node); if (f) return f; } return null; }
+function ownershipLabel(node) { const o = node.ownership || 'let'; const s = node.subscription || 'onAppear'; if (o === 'let') return 'born-ready'; if (s === 'deferred') return 'arrives-later'; return 'on-demand'; }
+function ensureVMSuffix(name) { return name.endsWith('ViewModel') ? name : name + 'ViewModel'; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;'); }
+
+function computeStats(node, isRoot) {
+  let s = { total:0, bornReady:0, arrivesLater:0, onDemand:0, bonds:0, outputs:0 };
+  s.total = 1;
+  if (!isRoot) { const l = ownershipLabel(node); if (l==='born-ready') s.bornReady++; else if (l==='arrives-later') s.arrivesLater++; else s.onDemand++; }
+  s.bonds = (node.children || []).length; s.outputs = (node.outputActions || []).length;
+  for (const c of (node.children || [])) { const cs = computeStats(c, false); s.total+=cs.total; s.bornReady+=cs.bornReady; s.arrivesLater+=cs.arrivesLater; s.onDemand+=cs.onDemand; s.bonds+=cs.bonds; s.outputs+=cs.outputs; }
+  return s;
+}
+function renderStats() {
+  const s = computeStats(getRoot(), true);
+  document.getElementById('statsBar').innerHTML =
+    '<div class="stat"><div class="stat-value" style="color:var(--purple)">'+s.total+'</div><div class="stat-label">View Models</div></div>' +
+    '<div class="stat"><div class="stat-value" style="color:var(--cyan)">'+s.bonds+'</div><div class="stat-label">Soul Bonds</div></div>' +
+    '<div class="stat"><div class="stat-value" style="color:var(--green)">'+s.outputs+'</div><div class="stat-label">Output Actions</div></div>' +
+    '<div class="stat"><div class="stat-value" style="color:var(--text)">'+(s.total*2)+'</div><div class="stat-label">Files</div></div>';
+}
+
+function renderNode(node, isRoot, depth) {
+  const name = ensureVMSuffix(node.name || 'Unknown');
+  const children = node.children || [];
+  const hasChildren = children.length > 0;
+  const ownLbl = isRoot ? 'root' : ownershipLabel(node);
+  const role = isRoot ? 'Root Orchestrator' : (hasChildren ? 'Mid-level Parent' : 'Leaf');
+  const roleCss = isRoot ? 'role-root' : (hasChildren ? 'role-parent' : 'role-leaf');
+  const detailOpen = depth <= 0;
+  const childrenOpen = depth <= 1;
+  let h = '<div class="tree-node" data-id="'+node._id+'">';
+  h += '<div class="node-card own-'+ownLbl+'">';
+  h += '<div class="card-header"><div class="header-left">';
+  if (hasChildren) h += '<button class="toggle-btn toggle-children-btn" onclick="toggleChildren(this)">'+( childrenOpen ? '&#x25BC;' : '&#x25B6;')+'</button>';
+  h += '<span class="node-name" ondblclick="startRename(this,'+node._id+')">'+name+'</span>';
+  h += '<span class="badge '+roleCss+'">'+role+'</span>';
+  if (!isRoot) {
+    h += '<select class="ownership-select '+ownLbl+'" onchange="changeOwnership('+node._id+',this.value)">';
+    h += '<option value="born-ready" '+(ownLbl==='born-ready'?'selected':'')+'>Born Ready</option>';
+    h += '<option value="arrives-later" '+(ownLbl==='arrives-later'?'selected':'')+'>Arrives Later</option>';
+    h += '<option value="on-demand" '+(ownLbl==='on-demand'?'selected':'')+'>On Demand</option>';
+    h += '</select>';
+  }
+  h += '</div><div class="header-right">';
+  h += '<button class="toggle-btn" onclick="toggleDetail(this)">'+( detailOpen ? '&#x25BC;' : '&#x25B6;')+'</button>';
+  if (!isRoot) h += '<button class="icon-btn danger" onclick="removeNode('+node._id+')">&#x2715;</button>';
+  h += '</div></div>';
+  h += '<div class="card-details" style="display:'+(detailOpen?'grid':'none')+'">';
+  h += '<div class="detail-full">'+renderRequirementsSection(node)+'</div>';
+  h += '<div class="detail-left">'+renderStateSection(node)+renderDepsSection(node)+renderApiCallsSection(node)+'</div>';
+  h += '<div class="detail-right">'+renderActionsSection(node,'viewActions','View Actions','act-view')+renderActionsSection(node,'outputActions','Output Actions','act-output')+renderActionsSection(node,'localActions','Local Actions','act-local')+'</div>';
+  if (isRoot && node.navigation) { h += '<div class="detail-full">'+renderNavSection(node)+'</div>'; }
+  h += '</div></div>';
+  h += '<div class="children-container" style="display:'+(childrenOpen?'block':'none')+'">';
+  if (children.length) { h += '<div class="children">'; for (const c of children) h += renderNode(c,false,depth+1); h += '</div>'; }
+  h += '<div class="add-child-area"><button class="add-child-btn" onclick="addChild('+node._id+')">+ Add child view model</button></div>';
+  h += '</div></div>';
+  return h;
+}
+
+function renderStateSection(node) {
+  const props = (node.state && node.state.properties) || {};
+  const entries = Object.entries(props);
+  let h = '<div class="section"><div class="section-header"><span class="section-title">State</span><span class="section-count">'+entries.length+'</span></div>';
+  h += '<table class="state-table">';
+  for (const [name,type] of entries) { h += '<tr><td class="state-name-cell"><input class="editable prop-name-input" value="'+esc(name)+'" onchange="renameStateProp('+node._id+',\''+esc(name)+'\',this.value)"></td><td class="state-type-cell"><input class="editable prop-type-input" value="'+esc(type)+'" onchange="changeStatePropType('+node._id+',\''+esc(name)+'\',this.value)"></td><td class="state-remove-cell"><button class="icon-btn danger remove-btn" onclick="removeStateProp('+node._id+',\''+esc(name)+'\')">&#x2715;</button></td></tr>'; }
+  h += '</table><input class="inline-add" placeholder="+ name: Type" onkeydown="addStatePropKey(event,'+node._id+',this)"></div>';
+  return h;
+}
+
+function renderActionsSection(node, key, title, cssClass) {
+  const actions = node[key] || [];
+  const dotColors = { 'act-view': 'var(--text-dim)', 'act-output': 'var(--green)', 'act-local': 'var(--blue)' };
+  let h = '<div class="section"><div class="section-header"><span class="section-title">'+title+'</span><span class="section-count">'+actions.length+'</span></div>';
+  if (actions.length) { h += '<div class="action-list-v">'; for (const a of actions) { h += '<div class="action-row '+cssClass+'"><span class="action-dot" style="background:'+(dotColors[cssClass]||'var(--text-dim)')+'"></span><span class="action-name">'+esc(a)+'</span><span class="remove-tag" onclick="removeAction('+node._id+',\''+key+'\',\''+esc(a)+'\')">x</span></div>'; } h += '</div>'; }
+  h += '<input class="inline-add" placeholder="+ action" onkeydown="addActionKey(event,'+node._id+',\''+key+'\',this)"></div>';
+  return h;
+}
+
+function renderDepsSection(node) {
+  const deps = node.dependencies || [];
+  let h = '<div class="section"><div class="section-header"><span class="section-title">Dependencies</span><span class="section-count">'+deps.length+'</span></div>';
+  for (const d of deps) { h += '<div class="dep-row"><span class="dep-at-label">@Dep</span><input class="editable prop-name-input" value="'+esc(d.name)+'" style="flex:1"><input class="editable dep-type-input" value="'+esc(d.type)+'" style="flex:1.5"><button class="icon-btn danger remove-btn" onclick="removeDep('+node._id+',\''+esc(d.name)+'\')">&#x2715;</button></div>'; }
+  h += '<input class="inline-add" placeholder="+ name: Type" onkeydown="addDepKey(event,'+node._id+',this)"></div>';
+  return h;
+}
+
+function renderApiCallsSection(node) {
+  const calls = node.apiCalls || [];
+  let h = '<div class="section"><div class="section-header"><span class="section-title">API Calls</span><span class="section-count">'+calls.length+'</span></div>';
+  for (let i = 0; i < calls.length; i++) { const c = calls[i]; h += '<div class="api-row"><span class="api-method">'+esc(c.method)+'</span><div class="api-detail"><span><span class="api-detail-label">Trigger </span><span class="api-detail-value api-trigger">'+esc(c.trigger||'')+'</span></span><span><span class="api-detail-label">Result </span><span class="api-detail-value api-result">'+esc(c.onResult||'')+'</span></span></div></div>'; }
+  h += '</div>';
+  return h;
+}
+
+function renderRequirementsSection(node) {
+  const reqs = node.requirements || [];
+  let h = '<div class="section"><div class="section-header"><span class="section-title">Requirements</span><span class="section-count">'+reqs.length+'</span></div>';
+  if (reqs.length) { h += '<div class="req-list">'; for (let i=0;i<reqs.length;i++) { h += '<div class="req-row"><span class="req-bullet"></span><span class="req-text">'+esc(reqs[i])+'</span><span class="remove-tag" onclick="removeRequirement('+node._id+','+i+')">x</span></div>'; } h += '</div>'; }
+  h += '<input class="inline-add" placeholder="+ Add requirement" onkeydown="addRequirementKey(event,'+node._id+',this)" style="font-family:Geist,-apple-system,sans-serif"></div>';
+  return h;
+}
+
+function renderNavSection(node) {
+  const nav = node.navigation || {};
+  const pushes = nav.pushDestinations || []; const sheets = nav.sheetDestinations || [];
+  let h = '<div class="section"><div class="section-header"><span class="section-title">Navigation</span><span class="section-count">'+(pushes.length+sheets.length)+'</span></div>';
+  if (pushes.length) { h += '<div class="nav-group"><span class="nav-label">Push</span>'; for (const p of pushes) h += '<span class="nav-tag nav-push">'+esc(p)+'</span>'; h += '</div>'; }
+  if (sheets.length) { h += '<div class="nav-group"><span class="nav-label">Sheet</span>'; for (const s of sheets) h += '<span class="nav-tag nav-sheet">'+esc(s)+'</span>'; h += '</div>'; }
+  h += '</div>';
+  return h;
+}
+
+// Editing operations
+function startRename(span, id) {
+  const node = findNode(id); if (!node) return;
+  const input = document.createElement('input'); input.className = 'node-name-input';
+  input.value = ensureVMSuffix(node.name || ''); input.style.width = Math.max(150, input.value.length*9)+'px';
+  span.replaceWith(input); input.focus(); input.select();
+  const finish = () => { let val = input.value.trim().replace(/ViewModel$/,''); if (val) node.name = val; render(); };
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', e => { if (e.key==='Enter') input.blur(); if (e.key==='Escape') { input.value=node.name; input.blur(); } });
+}
+function changeOwnership(id, value) {
+  const node = findNode(id); if (!node) return;
+  if (value==='born-ready') { node.ownership='let'; node.subscription='onAppear'; }
+  else if (value==='arrives-later') { node.ownership='optional'; node.subscription='deferred'; }
+  else { node.ownership='optional'; node.subscription='lazy'; }
+  render();
+}
+function removeNode(id) { const parent = findParent(id); if (!parent) return; parent.children = (parent.children||[]).filter(c=>c._id!==id); render(); }
+function addChild(parentId) {
+  const parent = findNode(parentId); if (!parent) return;
+  if (!parent.children) parent.children = [];
+  parent.children.push({ name:'NewChild', ownership:'optional', subscription:'lazy', state:{properties:{}}, viewActions:['onAppear'], outputActions:['didFinish'], localActions:[], dependencies:[], children:[], _id:nodeIdCounter++ });
+  render();
+}
+function renameStateProp(id, oldName, newName) {
+  const node = findNode(id); if (!node||!node.state||!node.state.properties) return;
+  newName = newName.trim(); if (!newName||newName===oldName) return;
+  const props = node.state.properties; const np = {};
+  for (const [k,v] of Object.entries(props)) np[k===oldName?newName:k]=v;
+  node.state.properties = np; render();
+}
+function changeStatePropType(id, name, newType) { const node = findNode(id); if (!node||!node.state||!node.state.properties) return; const k = Object.keys(node.state.properties).find(x=>x===name); if (k) node.state.properties[k]=newType.trim(); }
+function removeStateProp(id, name) { const node = findNode(id); if (!node||!node.state||!node.state.properties) return; delete node.state.properties[name]; render(); }
+function addStatePropKey(event, id, input) { if (event.key!=='Enter') return; const val=input.value.trim(); if (!val) return; const parts=val.split(':').map(s=>s.trim()); const node=findNode(id); if (!node) return; if (!node.state) node.state={}; if (!node.state.properties) node.state.properties={}; node.state.properties[parts[0]]=parts[1]||'String'; render(); }
+function removeAction(id, key, action) { const node = findNode(id); if (!node) return; node[key]=(node[key]||[]).filter(a=>a!==action); render(); }
+function addActionKey(event, id, key, input) { if (event.key!=='Enter') return; const val=input.value.trim(); if (!val) return; const node=findNode(id); if (!node) return; if (!node[key]) node[key]=[]; node[key].push(val); render(); }
+function removeDep(id, name) { const node=findNode(id); if (!node) return; node.dependencies=(node.dependencies||[]).filter(d=>d.name!==name); render(); }
+function addDepKey(event, id, input) { if (event.key!=='Enter') return; const val=input.value.trim(); if (!val) return; const parts=val.split(':').map(s=>s.trim()); const node=findNode(id); if (!node) return; if (!node.dependencies) node.dependencies=[]; node.dependencies.push({name:parts[0],type:parts[1]||parts[0]}); render(); }
+function removeRequirement(id, index) { const node=findNode(id); if (!node||!node.requirements) return; node.requirements.splice(index,1); render(); }
+function addRequirementKey(event, id, input) { if (event.key!=='Enter') return; const val=input.value.trim(); if (!val) return; const node=findNode(id); if (!node) return; if (!node.requirements) node.requirements=[]; node.requirements.push(val); render(); }
+
+// Toggle helpers
+function toggleDetail(btn) { const d=btn.closest('.node-card').querySelector('.card-details'); if (!d) return; const v=d.style.display!=='none'; d.style.display=v?'none':'grid'; btn.innerHTML=v?'&#x25B6;':'&#x25BC;'; }
+function toggleChildren(btn) { const c=btn.closest('.tree-node').querySelector(':scope > .children-container'); if (!c) return; const v=c.style.display!=='none'; c.style.display=v?'none':'block'; btn.innerHTML=v?'&#x25B6;':'&#x25BC;'; }
+function expandAll() { document.querySelectorAll('.children-container').forEach(el=>el.style.display='block'); document.querySelectorAll('.toggle-children-btn').forEach(b=>b.innerHTML='&#x25BC;'); }
+function collapseAll() { document.querySelectorAll('.children-container').forEach((el,i)=>{ if(i>0) el.style.display='none'; }); document.querySelectorAll('.toggle-children-btn').forEach((b,i)=>{ if(i>0) b.innerHTML='&#x25B6;'; }); }
+function toggleAllDetails(show) { document.querySelectorAll('.card-details').forEach(el=>el.style.display=show?'grid':'none'); }
+
+// Export
+function cleanForExport(node) {
+  const c = {}; c.name=node.name;
+  if (node.ownership) c.ownership=node.ownership; if (node.subscription) c.subscription=node.subscription;
+  if (node.state) c.state=node.state;
+  if (node.viewActions&&node.viewActions.length) c.viewActions=node.viewActions;
+  if (node.outputActions&&node.outputActions.length) c.outputActions=node.outputActions;
+  if (node.localActions&&node.localActions.length) c.localActions=node.localActions;
+  if (node.dependencies&&node.dependencies.length) c.dependencies=node.dependencies;
+  if (node.navigation) c.navigation=node.navigation;
+  if (node.apiCalls&&node.apiCalls.length) c.apiCalls=node.apiCalls;
+  if (node.requirements&&node.requirements.length) c.requirements=node.requirements;
+  c.children=(node.children||[]).map(cleanForExport);
+  return c;
+}
+function getExportJson() { const e = {}; if (treeData.featureName) e.featureName=treeData.featureName; if (treeData.outputPath) e.outputPath=treeData.outputPath; e.root=cleanForExport(getRoot()); return JSON.stringify(e,null,2); }
+function showExportModal() { document.getElementById('exportTextarea').value=getExportJson(); document.getElementById('exportModal').classList.add('visible'); }
+function closeExportModal() { document.getElementById('exportModal').classList.remove('visible'); }
+function copyJson() { navigator.clipboard.writeText(getExportJson()).then(()=>showToast('Copied to clipboard')); }
+function copyFromModal() { navigator.clipboard.writeText(document.getElementById('exportTextarea').value).then(()=>showToast('Copied to clipboard')); }
+function downloadJson() { const blob=new Blob([getExportJson()],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=(treeData.featureName||'vm-tree')+'.json'; a.click(); URL.revokeObjectURL(url); showToast('Downloaded '+a.download); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('visible'); setTimeout(()=>t.classList.remove('visible'),2000); }
+
+function render() { document.getElementById('treeContainer').innerHTML=renderNode(getRoot(),true,0); renderStats(); }
+render();
+<` + `/script>
+</body>
+</html>`;
+}
+
+// ---------------------------------------------------------------
+// Export / Import
+// ---------------------------------------------------------------
+function exportJson() {
+  const tree = buildTree();
+  const json = JSON.stringify(tree, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (tree.featureName || 'requirements') + '-requirements.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Downloaded ' + a.download);
+}
+
+function importJson() {
+  document.getElementById('fileInput').click();
+}
+
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      loadFromJson(data);
+      showToast('Imported successfully');
+    } catch (err) {
+      showToast('Invalid JSON file');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function loadFromJson(data) {
+  vms = [];
+  vmIdCounter = 0;
+  document.getElementById('featureName').value = data.featureName || '';
+  document.getElementById('outputPath').value = data.outputPath || '';
+  updateTitle();
+
+  function loadNode(node, parentId) {
+    const vm = createVM(node.name || '', parentId);
+    vm.requirements = node.requirements || [];
+    vm.screenshots = node.screenshots || [];
+    vm.apiCalls = (node.apiCalls || []).map(a => ({
+      endpoint: a.endpoint || a.method || '',
+      trigger: a.trigger || ''
+    }));
+    vm.edgeCases = node.edgeCases || [];
+    vm.externalDependencies = (node.externalDependencies || []).map(d => ({
+      name: d.name || '',
+      type: d.type || ''
+    }));
+    vm.errorHandling = (node.errorHandling || []).map(e => ({
+      error: e.error || '',
+      handling: e.handling || ''
+    }));
+    vms.push(vm);
+    for (const child of (node.children || [])) {
+      loadNode(child, vm.id);
+    }
+  }
+
+  if (data.root) {
+    loadNode(data.root, null);
+  }
+  render();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 2000);
+}
+
+// ---------------------------------------------------------------
+// Screenshots
+// ---------------------------------------------------------------
+let activeVMForPaste = null;
+
+function addScreenshot(vmId, dataUrl) {
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.screenshots.push(dataUrl);
+  render();
+}
+
+function removeScreenshot(vmId, index) {
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.screenshots.splice(index, 1);
+  render();
+}
+
+function processImageFile(file, vmId) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = (e) => addScreenshot(vmId, e.target.result);
+  reader.readAsDataURL(file);
+}
+
+function handleDragOver(event) {
+  event.preventDefault();
+  event.currentTarget.classList.add('dragover');
+}
+
+function handleDragLeave(event) {
+  event.currentTarget.classList.remove('dragover');
+}
+
+function handleDrop(event, vmId) {
+  event.preventDefault();
+  event.currentTarget.classList.remove('dragover');
+  const files = event.dataTransfer.files;
+  for (let i = 0; i < files.length; i++) {
+    processImageFile(files[i], vmId);
+  }
+}
+
+function triggerFileInput(vmId) {
+  const input = document.getElementById('screenshotFileInput');
+  input.dataset.vmId = vmId;
+  input.click();
+}
+
+function handleScreenshotFileInput(event) {
+  const vmId = parseInt(event.target.dataset.vmId);
+  const files = event.target.files;
+  for (let i = 0; i < files.length; i++) {
+    processImageFile(files[i], vmId);
+  }
+  event.target.value = '';
+}
+
+// Global paste listener -- paste into the most recently focused VM card
+document.addEventListener('paste', function(e) {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  let targetVmId = activeVMForPaste;
+  if (targetVmId === null) {
+    if (vms.length) targetVmId = vms[0].id;
+    else return;
+  }
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.startsWith('image/')) {
+      e.preventDefault();
+      const file = items[i].getAsFile();
+      processImageFile(file, targetVmId);
+      return;
+    }
+  }
+});
+
+// Track which VM card is active for paste
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.vm-card');
+  if (card) {
+    activeVMForPaste = parseInt(card.dataset.vmId);
+  }
+});
+
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = src;
+  lb.classList.add('visible');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('visible');
+}
+
+// ---------------------------------------------------------------
+// Theme toggle
+// ---------------------------------------------------------------
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('themeIcon').innerHTML = next === 'dark' ? '&#x1F319;' : '&#x2600;';
+  localStorage.setItem('vm-req-theme', next);
+}
+
+// Restore saved theme
+(function() {
+  const saved = localStorage.getItem('vm-req-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('themeIcon').innerHTML = saved === 'dark' ? '&#x1F319;' : '&#x2600;';
+  }
+})();
+
+// ---------------------------------------------------------------
+// URL params + localStorage persistence
+// ---------------------------------------------------------------
+function getUrlParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+function storageKey() {
+  const name = document.getElementById('featureName').value.trim() || 'draft';
+  return 'feature-scaffold:' + name;
+}
+function autoSave() {
+  try {
+    const tree = buildTree();
+    tree._vms = vms;
+    localStorage.setItem(storageKey(), JSON.stringify(tree));
+  } catch(e) {}
+}
+function autoLoad() {
+  const featureParam = getUrlParam('feature');
+  if (featureParam) {
+    const key = 'feature-scaffold:' + featureParam;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data._vms && data._vms.length) {
+          vms.length = 0;
+          data._vms.forEach(v => vms.push(v));
+          document.getElementById('featureName').value = data.featureName || featureParam;
+          document.getElementById('outputPath').value = data.outputPath || '';
+          updateTitle();
+          render();
+          return true;
+        }
+      } catch(e) {}
+    }
+  }
+  // Try loading any saved state for current feature name
+  const nameInput = document.getElementById('featureName').value.trim();
+  if (nameInput && nameInput !== '__FEATURE_NAME__') {
+    const saved = localStorage.getItem('feature-scaffold:' + nameInput);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data._vms && data._vms.length) {
+          vms.length = 0;
+          data._vms.forEach(v => vms.push(v));
+          render();
+          return true;
+        }
+      } catch(e) {}
+    }
+  }
+  return false;
+}
+
+// Patch render to auto-save after every render
+const _originalRender = render;
+render = function() {
+  _originalRender();
+  autoSave();
+};
+
+// ---------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------
+(function() {
+  // Read feature name from URL param
+  const featureParam = getUrlParam('feature');
+  if (featureParam) {
+    document.getElementById('featureName').value = featureParam;
+    document.getElementById('outputPath').value = 'Wise/' + featureParam;
+    document.title = featureParam + ' \u2014 Requirements Input';
+    updateTitle();
+  }
+  // Try to load saved state, otherwise init fresh
+  if (!autoLoad()) {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
