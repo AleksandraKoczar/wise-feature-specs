@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,8 +18,7 @@
     --purple: #a78bfa; --purple-bg: rgba(167,139,250,0.08); --purple-border: rgba(167,139,250,0.20);
     --rose: #fb7185; --rose-bg: rgba(251,113,133,0.08); --rose-border: rgba(251,113,133,0.20);
     --cyan: #22d3ee; --cyan-bg: rgba(34,211,238,0.08); --cyan-border: rgba(34,211,238,0.20);
-    --red: #ef4444; --red-bg: rgba(239,68,68,0.08); --red-border: rgba(239,68,68,0.25);
-    --radius: 12px; --radius-sm: 8px;
+    --radius: 10px; --radius-sm: 6px;
   }
   [data-theme="light"] {
     --bg: #f5f5f7; --surface: #ffffff; --surface2: #f0f0f2; --surface3: #e5e5ea;
@@ -39,6 +38,7 @@
     padding: 2.5rem 3.5rem; max-width: 1000px; margin: 0 auto;
   }
 
+  /* Theme toggle */
   .theme-toggle {
     position: fixed; top: 1.25rem; right: 1.5rem; z-index: 100;
     background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
@@ -46,21 +46,17 @@
     width: 52px; height: 28px; transition: all 0.3s ease;
   }
   .theme-toggle:hover { border-color: var(--border-hover); }
-  .theme-toggle .toggle-track { width: 100%; height: 100%; border-radius: 20px; position: relative; }
-  .theme-toggle .toggle-thumb {
+  .toggle-track { width: 100%; height: 100%; border-radius: 20px; position: relative; }
+  .toggle-thumb {
     width: 20px; height: 20px; border-radius: 50%; background: var(--purple);
     position: absolute; top: 50%; transform: translateY(-50%);
     left: 2px; transition: left 0.3s ease;
     display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
   }
-  [data-theme="light"] .theme-toggle .toggle-thumb { left: calc(100% - 22px); }
+  [data-theme="light"] .toggle-thumb { left: calc(100% - 22px); }
 
-  .breadcrumb { margin-bottom: 1.5rem; font-size: 0.82rem; }
-  .breadcrumb a { color: var(--cyan); text-decoration: none; }
-  .breadcrumb a:hover { text-decoration: underline; }
-  .breadcrumb .sep { color: var(--text-dim); margin: 0 0.4rem; }
-
-  .page-header { margin-bottom: 2rem; }
+  /* Header */
+  .page-header { margin-bottom: 2.5rem; }
   .page-header h1 {
     font-size: 2rem; font-weight: 700; color: var(--text-bright); letter-spacing: -0.02em;
   }
@@ -70,102 +66,166 @@
   }
   .page-subtitle { color: var(--text-dim); font-size: 0.95rem; margin-top: 0.35rem; }
 
-  .info-panel {
+  /* Section cards */
+  .section-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 1.25rem 1.5rem; margin-bottom: 2rem;
+    padding: 1.5rem 1.75rem; margin-bottom: 1.25rem; transition: border-color 0.15s ease;
   }
-  .info-panel p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.7; }
-  .info-panel strong { color: var(--text-bright); }
-  .info-panel a { color: var(--cyan); text-decoration: none; }
-  .info-panel a:hover { text-decoration: underline; }
+  .section-card:hover { border-color: var(--border-hover); }
+  .section-card h2 {
+    font-size: 1.3rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .section-card h3 {
+    font-size: 1.05rem; font-weight: 600; color: var(--text-bright); margin-top: 1.25rem; margin-bottom: 0.4rem;
+  }
+  .section-card h4 {
+    font-size: 0.9rem; font-weight: 600; color: var(--text-dim); margin-top: 1rem; margin-bottom: 0.3rem;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .section-card p { font-size: 0.9rem; margin-bottom: 0.6rem; }
+  .section-card ol, .section-card ul { padding-left: 1.4rem; margin-bottom: 0.6rem; }
+  .section-card li { font-size: 0.9rem; margin: 0.25rem 0; }
+  .section-card li strong { color: var(--text-bright); }
 
-  h2 {
-    font-size: 1.35rem; font-weight: 700; color: var(--text-bright);
-    margin-top: 2.5rem; margin-bottom: 0.75rem; letter-spacing: -0.01em;
-  }
-  h3 {
-    font-size: 1.05rem; font-weight: 600; color: var(--text-bright);
-    margin-top: 1.5rem; margin-bottom: 0.5rem;
-  }
+  /* Accent borders */
+  .accent-purple { border-left: 4px solid var(--purple); }
+  .accent-green { border-left: 4px solid var(--green); }
+  .accent-amber { border-left: 4px solid var(--amber); }
+  .accent-cyan { border-left: 4px solid var(--cyan); }
+  .accent-rose { border-left: 4px solid var(--rose); }
+  .accent-blue { border-left: 4px solid var(--blue); }
 
-  .section {
-    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 1.5rem 1.75rem; margin-bottom: 1rem;
-  }
-  .section p, .section li { font-size: 0.88rem; line-height: 1.7; }
-  .section ul { padding-left: 1.25rem; margin-top: 0.5rem; }
-  .section li { margin-bottom: 0.3rem; }
-  .section code {
-    background: var(--surface2); padding: 0.12rem 0.45rem; border-radius: 4px;
-    font-family: 'Geist Mono', monospace; font-size: 0.82rem; color: var(--cyan);
-  }
-
-  .role-tag {
-    font-size: 0.65rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 20px;
-    text-transform: uppercase; letter-spacing: 0.04em; display: inline-block;
-    margin-bottom: 0.5rem;
-  }
-  .role-pm { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
-  .role-eng { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
-  .role-both { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
-  .role-ai { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-
-  .workflow-flow {
-    display: flex; gap: 0; margin: 2rem 0; background: var(--surface);
+  /* Workflow steps bar */
+  .workflow {
+    display: flex; gap: 0; margin-bottom: 2rem; background: var(--surface);
     border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
   }
-  .flow-step {
-    flex: 1; padding: 1rem; border-right: 1px solid var(--border); text-align: center;
+  .workflow-step {
+    flex: 1; padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.6rem;
+    border-right: 1px solid var(--border); position: relative;
   }
-  .flow-step:last-child { border-right: none; }
-  .flow-num {
-    width: 28px; height: 28px; border-radius: 50%; display: inline-flex;
+  .workflow-step:last-child { border-right: none; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%; display: flex;
     align-items: center; justify-content: center; font-size: 0.75rem;
-    font-weight: 700; margin-bottom: 0.4rem;
+    font-weight: 700; flex-shrink: 0;
   }
-  .flow-step:nth-child(1) .flow-num { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
-  .flow-step:nth-child(2) .flow-num { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
-  .flow-step:nth-child(3) .flow-num { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
-  .flow-step:nth-child(4) .flow-num { background: var(--cyan-bg); color: var(--cyan); border: 1px solid var(--cyan-border); }
-  .flow-step:nth-child(5) .flow-num { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-  .flow-title { font-size: 0.82rem; font-weight: 600; color: var(--text-bright); }
-  .flow-role { font-size: 0.68rem; color: var(--text-dim); margin-top: 0.15rem; }
+  .ws-purple .step-num { background: var(--purple); color: var(--bg); }
+  .ws-cyan .step-num { background: var(--cyan); color: var(--bg); }
+  .ws-amber .step-num { background: var(--amber); color: var(--bg); }
+  .ws-green .step-num { background: var(--green); color: var(--bg); }
+  .ws-blue .step-num { background: var(--blue); color: var(--bg); }
+  .ws-purple { background: var(--purple-bg); }
+  .ws-cyan { background: var(--cyan-bg); }
+  .ws-amber { background: var(--amber-bg); }
+  .ws-green { background: var(--green-bg); }
+  .ws-blue { background: var(--blue-bg); }
+  .step-label { font-size: 0.8rem; font-weight: 600; }
+  .ws-purple .step-label { color: var(--purple); }
+  .ws-cyan .step-label { color: var(--cyan); }
+  .ws-amber .step-label { color: var(--amber); }
+  .ws-green .step-label { color: var(--green); }
+  .ws-blue .step-label { color: var(--blue); }
+  .step-desc { font-size: 0.65rem; color: var(--text-dim); }
 
-  .json-block {
+  /* Roles table */
+  .roles-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem;
+  }
+  .role-card {
     background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    padding: 1rem; margin: 0.75rem 0; overflow-x: auto;
+    padding: 1rem 1.1rem;
   }
-  .json-block pre {
-    font-family: 'Geist Mono', monospace; font-size: 0.78rem; color: var(--text);
-    line-height: 1.6; white-space: pre;
+  .role-name {
+    font-size: 0.85rem; font-weight: 700; color: var(--text-bright); margin-bottom: 0.3rem;
+    display: flex; align-items: center; gap: 0.4rem;
   }
+  .role-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; }
 
+  /* Tables */
   table {
     width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.85rem;
   }
+  th, td {
+    border: 1px solid var(--border); padding: 0.55rem 0.85rem; text-align: left;
+  }
   th {
-    text-align: left; font-weight: 600; color: var(--text-bright);
-    padding: 0.5rem 0.75rem; border-bottom: 2px solid var(--border);
+    background: var(--surface2); font-weight: 600; color: var(--text-bright);
     font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
   }
-  td {
-    padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
+  td { color: var(--text); }
+  tr:hover td { background: rgba(255,255,255,0.015); }
 
+  /* Code */
+  code {
+    background: var(--surface2); padding: 0.15rem 0.45rem; border-radius: 4px;
+    font-size: 0.85em; font-family: 'Geist Mono', 'SFMono-Regular', Consolas, monospace;
+    color: var(--cyan);
+  }
+  pre {
+    background: var(--surface2); padding: 1.1rem; border-radius: var(--radius-sm);
+    overflow-x: auto; font-size: 0.82rem; margin: 0.75rem 0; border: 1px solid var(--border);
+  }
+  pre code { background: none; padding: 0; color: var(--text); }
+
+  /* Badge */
+  .badge {
+    font-size: 0.65rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 0.25rem;
+  }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .badge-cyan { background: var(--cyan-bg); color: var(--cyan); border: 1px solid var(--cyan-border); }
+  .badge-rose { background: var(--rose-bg); color: var(--rose); border: 1px solid var(--rose-border); }
+
+  /* Info / tip panels */
+  .info-panel {
+    background: var(--blue-bg); border: 1px solid var(--blue-border); border-radius: var(--radius-sm);
+    padding: 0.85rem 1.1rem; margin: 0.75rem 0; font-size: 0.85rem;
+  }
+  .info-panel strong { color: var(--blue); }
+  .info-panel a { color: var(--blue); text-decoration: none; }
+  .info-panel a:hover { text-decoration: underline; }
+
+  .tip-panel {
+    background: var(--green-bg); border: 1px solid var(--green-border); border-radius: var(--radius-sm);
+    padding: 0.85rem 1.1rem; margin: 0.75rem 0; font-size: 0.85rem;
+  }
+  .tip-panel strong { color: var(--green); }
+  .tip-panel ul { padding-left: 1.2rem; margin: 0; }
+  .tip-panel li { margin: 0.35rem 0; }
+
+  /* Divider */
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  /* Links */
+  a { color: var(--purple); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Footer */
   .page-footer {
-    margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border);
+    margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
     color: var(--text-dim); font-size: 0.75rem; display: flex;
     justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
   }
-  .page-footer a { color: var(--cyan); text-decoration: none; }
-  .page-footer a:hover { text-decoration: underline; }
+
+  /* Getting started CTA */
+  .cta-card {
+    background: var(--purple-bg); border: 1px solid var(--purple-border);
+    border-radius: var(--radius); padding: 1.5rem 1.75rem; margin-top: 1.25rem;
+  }
+  .cta-card h2 { color: var(--purple); }
+  .cta-card ol { padding-left: 1.4rem; }
+  .cta-card li { font-size: 0.9rem; margin: 0.3rem 0; }
 
   @media (max-width: 768px) {
     body { padding: 1rem; }
-    .workflow-flow { flex-direction: column; }
-    .flow-step { border-right: none; border-bottom: 1px solid var(--border); }
-    .flow-step:last-child { border-bottom: none; }
+    .workflow { flex-direction: column; }
+    .workflow-step { border-right: none; border-bottom: 1px solid var(--border); }
+    .roles-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -175,282 +235,256 @@
   <div class="toggle-track"><div class="toggle-thumb" id="themeIcon">&#x1F319;</div></div>
 </div>
 
-<div class="breadcrumb">
-  <a href="index.html">Feature Specs</a><span class="sep">/</span>Workflow
-</div>
-
 <div class="page-header">
   <h1><span>Spec-Driven</span> Feature Workflow</h1>
-  <div class="page-subtitle">A repeatable process for turning product requirements into production code</div>
+  <div class="page-subtitle">
+    A structured process for turning product requirements into production code using a shared requirements page and Claude Code.
+  </div>
 </div>
 
-<h2>Overview</h2>
-<div class="section">
-  <p>
-    Software engineering in 2026 is fundamentally different. AI hasn't just added a new tool to the belt &mdash;
-    it has <strong>changed how we think about building software</strong>. The bottleneck is no longer writing code.
-    It's <strong>defining what to build</strong> with enough clarity that AI can generate production-ready
-    architecture and code in minutes.
-  </p>
-  <p style="margin-top: 0.75rem;">
-    <strong>Spec-driven development</strong> is the natural evolution. Instead of writing user stories
-    that a developer interprets into code over days or weeks, you write a structured spec &mdash;
-    flows, requirements, API contracts, edge cases, error handling &mdash; and feed it to an AI
-    that generates the full stack. The iteration cycle collapses from weeks to hours.
-  </p>
-  <p style="margin-top: 0.75rem;">
-    This workflow turns product requirements into production-ready code &mdash; across
-    <strong>iOS, Android, web, or any stack</strong> &mdash; through a structured 5-step
-    collaboration between PMs, designers, engineers, and AI.
-  </p>
-  <p style="margin-top: 0.75rem;">
-    <strong>Roles:</strong>
-  </p>
-  <ul>
-    <li><strong>PM / Designer</strong> &mdash; Defines the user flows, requirements, and design references</li>
-    <li><strong>Engineer</strong> &mdash; Adds API contracts, edge cases, error handling, and external dependencies</li>
-    <li><strong>Claude Code</strong> &mdash; Proposes the architecture and generates production code from the spec</li>
-  </ul>
-  <p style="margin-top: 0.75rem;">
-    Start by <a href="requirements.html?feature=YourFeature">creating a requirements spec</a>,
-    or read through each step below to understand the full process.
-  </p>
+<!-- Workflow Steps Bar -->
+<div class="workflow">
+  <div class="workflow-step ws-purple">
+    <div class="step-num">1</div>
+    <div><div class="step-label">Define Flows</div><div class="step-desc">PM / Designer</div></div>
+  </div>
+  <div class="workflow-step ws-cyan">
+    <div class="step-num">2</div>
+    <div><div class="step-label">Add API Calls</div><div class="step-desc">Engineer</div></div>
+  </div>
+  <div class="workflow-step ws-amber">
+    <div class="step-num">3</div>
+    <div><div class="step-label">Edge Cases &amp; Errors</div><div class="step-desc">PM + Engineer</div></div>
+  </div>
+  <div class="workflow-step ws-green">
+    <div class="step-num">4</div>
+    <div><div class="step-label">Review Architecture</div><div class="step-desc">Engineer</div></div>
+  </div>
+  <div class="workflow-step ws-blue">
+    <div class="step-num">5</div>
+    <div><div class="step-label">Generate Code</div><div class="step-desc">Claude Code</div></div>
+  </div>
 </div>
 
-<!-- Overview Flow -->
-<div class="workflow-flow">
-  <div class="flow-step">
-    <div class="flow-num">1</div>
-    <div class="flow-title">Define Flows</div>
-    <div class="flow-role">PM / Designer</div>
-  </div>
-  <div class="flow-step">
-    <div class="flow-num">2</div>
-    <div class="flow-title">Add API Calls</div>
-    <div class="flow-role">Engineer</div>
-  </div>
-  <div class="flow-step">
-    <div class="flow-num">3</div>
-    <div class="flow-title">Edge Cases &amp; Errors</div>
-    <div class="flow-role">PM + Engineer</div>
-  </div>
-  <div class="flow-step">
-    <div class="flow-num">4</div>
-    <div class="flow-title">Propose Architecture</div>
-    <div class="flow-role">Claude Code</div>
-  </div>
-  <div class="flow-step">
-    <div class="flow-num">5</div>
-    <div class="flow-title">Generate Code</div>
-    <div class="flow-role">Claude Code</div>
+<!-- Overview -->
+<div class="section-card accent-purple">
+  <h2>Overview</h2>
+  <p>AI is fundamentally changing how software gets built. In 2026, the bottleneck is no longer writing code &mdash; it's deciding <em>what</em> to build and <em>how</em> it should behave. The teams that move fastest are the ones that invest in clear specs upfront and let AI handle the translation to production code. This shifts the craft from typing to thinking: defining requirements precisely, catching edge cases early, and iterating on architecture in minutes instead of days.</p>
+  <p>Spec-driven development replaces the old cycle of ad-hoc Slack threads, blank-file starts, and slow handoffs between PM and engineering. Instead, we use a <strong>requirements HTML page</strong> as the single source of truth. PMs, designers, and engineers all contribute to the same document &mdash; each in their area of expertise. Once complete, it generates a prompt that Claude Code uses to scaffold the full architecture and code. The result: iteration cycles that used to take a sprint now take an afternoon.</p>
+  <div class="info-panel">
+    <strong>Requirements page:</strong> <a href="requirements-page.html">Open Requirements Page</a><br>
+    <strong>Workflow diagram:</strong> <a href="https://www.figma.com/online-whiteboard/create-diagram/008606d0-8dda-4f8e-ac7c-6d31ca6f38b6?utm_source=other&utm_content=edit_in_figjam">Open in FigJam</a><br>
+    <strong>Requirements page sections:</strong> <a href="https://www.figma.com/online-whiteboard/create-diagram/2296cc68-213c-4070-accf-7086532860f4?utm_source=other&utm_content=edit_in_figjam">Open in FigJam</a>
   </div>
 </div>
+
+<!-- Roles -->
+<div class="section-card">
+  <h2>Roles</h2>
+  <div class="roles-grid">
+    <div class="role-card">
+      <div class="role-name"><span class="badge badge-purple">PM / Designer</span></div>
+      <div class="role-desc">Define flows, write product requirements, paste Figma screenshots, identify edge cases</div>
+    </div>
+    <div class="role-card">
+      <div class="role-name"><span class="badge badge-cyan">Engineer</span></div>
+      <div class="role-desc">Add API calls, external dependencies, error handling strategies, review generated architecture</div>
+    </div>
+    <div class="role-card">
+      <div class="role-name"><span class="badge badge-green">Claude Code</span></div>
+      <div class="role-desc">Propose architecture, generate production code from the spec &mdash; Swift, Kotlin, web, or any stack</div>
+    </div>
+  </div>
+</div>
+
+<hr>
 
 <!-- Step 1 -->
-<h2>Step 1: Define Flows</h2>
-<div class="section">
-  <span class="role-tag role-pm">PM / Designer</span>
-  <p>
-    The PM or designer defines the feature's user flows: which screens exist, what each screen does,
-    and how they relate to each other (parent-child hierarchy). This is where product requirements live.
-  </p>
-  <h3>What to capture</h3>
-  <ul>
-    <li><strong>Screen names</strong> &mdash; Give each screen a clear name (e.g., "ProductSelection", "Review", "Success")</li>
-    <li><strong>Parent-child relationships</strong> &mdash; Which screen owns which (e.g., Hub &rarr; BusinessDetails, ProductSelection, Review)</li>
-    <li><strong>Product requirements</strong> &mdash; Write from the user's perspective: "User can select a product from the available options"</li>
-    <li><strong>Design references</strong> &mdash; Paste or drag Figma screenshots directly into each screen</li>
-  </ul>
-  <h3>Tips</h3>
-  <ul>
-    <li>Start with the happy path &mdash; edge cases come in Step 3</li>
-    <li>One requirement per line, keep them atomic</li>
-    <li>Name screens by their purpose, not their UI component</li>
-    <li>Screenshots are optional but incredibly helpful for the architecture proposal</li>
-  </ul>
+<div class="section-card accent-purple">
+  <h2>Step 1: Define Flows and Requirements <span class="badge badge-purple">PM / Designer</span></h2>
+  <p>Open the requirements HTML page in a browser. For each flow in the feature:</p>
+  <ol>
+    <li><strong>Name the screen</strong> &mdash; e.g., "BusinessDetails", "ProductSelection", "BankAccountSetup"</li>
+    <li><strong>Set parent-child relationships</strong> &mdash; use the dropdown to nest child screens under a hub/root screen</li>
+    <li><strong>Write product requirements</strong> &mdash; describe what the screen does from the user's perspective</li>
+    <li><strong>Paste design reference</strong> &mdash; Cmd+V Figma screenshots directly into the screen card</li>
+  </ol>
+
+  <h3>Example: OnboardingToAcquiring</h3>
+  <p>The root screen is <strong>OnboardingHub</strong> with 5 children:</p>
+
+  <table>
+    <tr><th>Screen</th><th>Requirements</th></tr>
+    <tr><td><strong>OnboardingHub</strong> <span class="badge badge-purple">root</span></td><td>Welcome screen, progress indicator, back navigation</td></tr>
+    <tr><td><strong>BusinessDetails</strong></td><td>Enter business name + registration number, select business type, inline validation, pre-fill existing data</td></tr>
+    <tr><td><strong>ProductSelection</strong></td><td>Show available products with pricing, toggle enable/disable, at least one required</td></tr>
+    <tr><td><strong>BankAccountSetup</strong></td><td>Enter IBAN or select Wise balance, IBAN validation as user types</td></tr>
+    <tr><td><strong>Review</strong></td><td>Summary of all details, each section editable, submit disabled until valid</td></tr>
+    <tr><td><strong>Success</strong></td><td>Confirmation, CTA to dashboard, confetti animation</td></tr>
+  </table>
 </div>
 
 <!-- Step 2 -->
-<h2>Step 2: Add API Calls</h2>
-<div class="section">
-  <span class="role-tag role-eng">Engineer</span>
-  <p>
-    The engineer adds technical details that the PM may not know: which API endpoints each screen calls,
-    when each call is triggered, and what happens with the response.
-  </p>
-  <h3>For each API call, specify</h3>
+<div class="section-card accent-cyan">
+  <h2>Step 2: Add API Calls <span class="badge badge-cyan">Engineer</span></h2>
+  <p>For each screen that talks to the backend, add the endpoints:</p>
+
   <table>
-    <tr><th>Field</th><th>Example</th><th>Description</th></tr>
-    <tr><td><code>endpoint</code></td><td><code>GET /v1/profiles/{id}/products</code></td><td>HTTP method + path</td></tr>
-    <tr><td><code>trigger</code></td><td><code>onAppear</code></td><td>When the call fires (onAppear, buttonTapped, etc.)</td></tr>
+    <tr><th>Screen</th><th>Endpoint</th><th>Trigger</th></tr>
+    <tr><td>BusinessDetails</td><td><code>GET /v1/profiles/{profileId}/business</code></td><td>onAppear</td></tr>
+    <tr><td>ProductSelection</td><td><code>GET /v1/acquiring/products</code></td><td>onAppear</td></tr>
+    <tr><td>BankAccountSetup</td><td><code>GET /v1/profiles/{profileId}/balances</code></td><td>onAppear</td></tr>
+    <tr><td>BankAccountSetup</td><td><code>POST /v1/acquiring/payout-settings</code></td><td>saveTapped</td></tr>
   </table>
-  <h3>Tips</h3>
-  <ul>
-    <li>Use the actual API paths from your backend &mdash; Claude Code can generate the networking layer from these</li>
-    <li>Include both read (GET) and write (POST/PUT/DELETE) endpoints</li>
-    <li>If a screen makes multiple API calls, add each one separately</li>
-  </ul>
 </div>
 
 <!-- Step 3 -->
-<h2>Step 3: Edge Cases &amp; Errors</h2>
-<div class="section">
-  <span class="role-tag role-both">PM + Engineer</span>
-  <p>
-    This is where the spec goes from "demo-ready" to "production-ready". Together, the PM and engineer
-    think through what can go wrong and how the app should behave in unusual situations.
-  </p>
-  <h3>Edge Cases</h3>
-  <ul>
-    <li>Empty states (no data, no results)</li>
-    <li>Offline/poor connectivity scenarios</li>
-    <li>Boundary conditions (max items, very long text, special characters)</li>
-    <li>Race conditions (user taps multiple times, response arrives after navigation)</li>
-    <li>Permissions denied (camera, location, notifications)</li>
-  </ul>
-  <h3>Error Handling</h3>
+<div class="section-card accent-amber">
+  <h2>Step 3: Add Edge Cases, Dependencies, and Error Handling <span class="badge badge-amber">PM + Engineer</span></h2>
+  <p>This is the step that separates a draft from a production-ready spec. For each screen, fill in:</p>
+
+  <h4>Edge Cases</h4>
+  <p>Boundary conditions and unusual scenarios the code must handle.</p>
   <table>
-    <tr><th>Error Scenario</th><th>Handling</th></tr>
-    <tr><td>Network timeout</td><td>Show retry button with error message</td></tr>
-    <tr><td>Invalid IBAN</td><td>Inline validation error below the field</td></tr>
-    <tr><td>Session expired</td><td>Redirect to login</td></tr>
-    <tr><td>Server error (5xx)</td><td>Full-screen error with retry</td></tr>
+    <tr><th>Screen</th><th>Edge Case</th></tr>
+    <tr><td>BusinessDetails</td><td>Business name contains special characters or emoji</td></tr>
+    <tr><td>BusinessDetails</td><td>Registration number format varies by country</td></tr>
+    <tr><td>BankAccountSetup</td><td>User has no existing balances</td></tr>
+    <tr><td>BankAccountSetup</td><td>IBAN contains spaces or lowercase letters</td></tr>
+    <tr><td>BankAccountSetup</td><td>User switches between IBAN and balance selection mid-entry</td></tr>
   </table>
-  <h3>External Dependencies</h3>
-  <p>Services, SDKs, permissions, feature flags, or shared state this screen depends on.
-     These can be <code>@Dependency</code> properties or Factory-injected services.</p>
-  <ul>
-    <li>Feature flags (e.g., <code>FeatureFlag.acquiringEnabled</code>)</li>
-    <li>Permissions (Camera, Location, Notifications)</li>
-    <li>Shared services (Analytics, Deep Link Router)</li>
-    <li>Third-party SDKs (Stripe, Onfido, etc.)</li>
-  </ul>
+
+  <h4>External Dependencies</h4>
+  <p>Services, SDKs, permissions, or feature flags the screen depends on.</p>
+  <table>
+    <tr><th>Screen</th><th>Dependency</th><th>Type</th></tr>
+    <tr><td>BusinessDetails</td><td>ProfileService</td><td><span class="badge badge-purple">shared state</span></td></tr>
+    <tr><td>BankAccountSetup</td><td>IBANValidator</td><td><span class="badge badge-cyan">SDK</span></td></tr>
+    <tr><td>BankAccountSetup</td><td>BalanceService</td><td><span class="badge badge-purple">shared state</span></td></tr>
+  </table>
+
+  <h4>Error Handling</h4>
+  <p>What errors can occur and how each should be handled in the UI.</p>
+  <table>
+    <tr><th>Screen</th><th>Error</th><th>Handling</th></tr>
+    <tr><td>BusinessDetails</td><td>Network error loading business data</td><td><span class="badge badge-rose">retry button</span> with cached data if available</td></tr>
+    <tr><td>BusinessDetails</td><td>Invalid registration number</td><td><span class="badge badge-amber">inline validation</span> error below field</td></tr>
+    <tr><td>BankAccountSetup</td><td>Invalid IBAN format</td><td><span class="badge badge-amber">inline validation</span> under IBAN field</td></tr>
+    <tr><td>BankAccountSetup</td><td>Save payout settings fails (409 conflict)</td><td><span class="badge badge-rose">toast</span> with retry option</td></tr>
+    <tr><td>BankAccountSetup</td><td>Balances fail to load</td><td><span class="badge badge-amber">empty state</span> with manual IBAN entry fallback</td></tr>
+  </table>
 </div>
 
 <!-- Step 4 -->
-<h2>Step 4: Propose Architecture</h2>
-<div class="section">
-  <span class="role-tag role-ai">Claude Code</span>
-  <p>
-    With the spec complete, Claude Code analyzes the requirements and proposes a full architecture.
-    For iOS, this means a <code>@StateReducer</code> view model tree. For Android, a ViewModel hierarchy.
-    The proposal includes:
-  </p>
-  <ul>
-    <li><strong>State properties</strong> for each screen</li>
-    <li><strong>Actions</strong> &mdash; ViewActions (user interactions), OutputActions (signals to parent), LocalActions (internal)</li>
-    <li><strong>Dependencies</strong> &mdash; services, use cases, and APIs each screen needs</li>
-    <li><strong>Ownership types</strong> &mdash; always-present (<code>let</code>), deferred (created after API response), or lazy (created on user interaction)</li>
-    <li><strong>Navigation</strong> &mdash; push destinations vs sheet presentations</li>
-    <li><strong>Error handling</strong> &mdash; how each error maps to state and UI</li>
-  </ul>
-  <p style="margin-top: 0.75rem;">
-    The engineer reviews the proposed architecture in the
-    <a href="preview.html" style="color:var(--cyan)">tree preview editor</a>,
-    adjusting ownership types, adding missing actions, and fine-tuning dependencies.
-  </p>
+<div class="section-card accent-green">
+  <h2>Step 4: Generate and Review Architecture <span class="badge badge-green">Engineer</span></h2>
+  <p>Once all sections are filled:</p>
+  <ol>
+    <li>Click <strong>"Copy prompt for Claude Code"</strong> in the requirements page</li>
+    <li>Paste into a Claude Code session in the repo</li>
+    <li>Claude Code will:
+      <ul>
+        <li>Analyze the spec JSON</li>
+        <li>Propose the full <code>@StateReducer</code> view model tree (state, actions, effects, ownership types)</li>
+        <li>Generate an interactive HTML tree preview</li>
+      </ul>
+    </li>
+    <li><strong>Review the tree preview</strong> &mdash; check ownership types, parent-child relationships, action naming</li>
+    <li>Adjust if needed (add/remove nodes, change ownership from "born ready" to "on demand", etc.)</li>
+  </ol>
+
+  <h3>What Claude Code considers from the spec</h3>
+  <table>
+    <tr><th>Spec Field</th><th>How it informs the architecture</th></tr>
+    <tr><td><strong>Requirements</strong></td><td>State properties, ViewActions, screen content</td></tr>
+    <tr><td><strong>API Calls</strong></td><td>Dependencies, Effects, LocalActions for responses</td></tr>
+    <tr><td><strong>Edge Cases</strong></td><td>Guard clauses, validation logic, empty state handling</td></tr>
+    <tr><td><strong>External Dependencies</strong></td><td><code>@Dependency</code> properties or Factory-injected services, feature flag checks</td></tr>
+    <tr><td><strong>Error Handling</strong></td><td>Error state properties, retry effects, UI error presentation</td></tr>
+  </table>
 </div>
 
 <!-- Step 5 -->
-<h2>Step 5: Generate Code</h2>
-<div class="section">
-  <span class="role-tag role-ai">Claude Code</span>
-  <p>
-    Once the architecture is approved, Claude Code generates production code from the spec &mdash;
-    Swift, Kotlin, web, or any stack. Using the <code>/feature-scaffold</code> skill:
-  </p>
+<div class="section-card accent-blue">
+  <h2>Step 5: Generate Code <span class="badge badge-blue" style="background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border);">Claude Code</span></h2>
+  <p>After reviewing the architecture, Claude Code generates all files:</p>
   <ul>
-    <li>All view models / ViewModels with state, actions, and reducers</li>
-    <li>All views / Composables / UI components</li>
-    <li>Parent-child wiring and lifecycle management</li>
-    <li>Networking layer &mdash; service protocols, implementations, DTOs, error types (via <code>/networkingLayer</code>)</li>
-    <li>Configuration structs with localization keys</li>
-    <li>Navigation setup</li>
+    <li><strong>ViewModels</strong> &mdash; <code>@StateReducer</code> view models with State, Actions, reduce(), parent-child wiring</li>
+    <li><strong>Views</strong> &mdash; SwiftUI views with NavigationStack, sheet/push navigation</li>
+    <li><strong>Networking</strong> &mdash; Service protocols, repositories, use cases for each API call</li>
+    <li><strong>Configuration</strong> &mdash; Localization key stubs</li>
   </ul>
-  <p style="margin-top: 0.5rem;">
-    The engineer reviews the generated code, makes adjustments, and ships.
-  </p>
+  <p>All files follow the <code>feature-scaffold</code> skill conventions (naming, IntegratedAction handling, subscribeToChild pattern, CancellableEffect enum).</p>
 </div>
 
+<hr>
+
 <!-- JSON Format -->
-<h2>JSON Spec Format</h2>
-<div class="section">
-  <p>The requirements page exports a JSON spec that Claude Code consumes. Here's the structure:</p>
-  <div class="json-block">
-<pre>{
+<div class="section-card">
+  <h2>JSON Format</h2>
+  <p>The requirements page exports a JSON tree. Here's a condensed example for OnboardingToAcquiring:</p>
+  <pre><code>{
   "featureName": "OnboardingToAcquiring",
-  "outputPath": "Wise/OnboardingToAcquiringKit",
+  "outputPath": "Wise/OnboardingToAcquiring",
   "root": {
     "name": "OnboardingHub",
-    "requirements": [
-      "User sees a step-by-step onboarding flow",
-      "Progress indicator shows current step"
-    ],
-    "apiCalls": [
-      { "endpoint": "GET /v1/profiles/{id}/onboarding", "trigger": "onAppear" }
-    ],
-    "edgeCases": [
-      "User closes app mid-flow and returns",
-      "API returns partial data for some steps"
-    ],
-    "externalDependencies": [
-      { "name": "FeatureFlag.acquiringEnabled", "type": "feature flag" }
-    ],
-    "errorHandling": [
-      { "error": "Network timeout", "handling": "Retry button with cached state" }
-    ],
+    "requirements": ["Welcome screen", "Progress indicator", "Back navigation"],
     "children": [
       {
         "name": "BusinessDetails",
-        "requirements": ["User enters business name and type"],
-        "children": []
-      },
-      {
-        "name": "ProductSelection",
-        "requirements": ["User picks from available products"],
+        "requirements": ["Enter business name + registration number", "..."],
         "apiCalls": [
-          { "endpoint": "GET /v1/products", "trigger": "onAppear" }
+          { "endpoint": "GET /v1/profiles/{profileId}/business", "trigger": "onAppear" }
+        ],
+        "edgeCases": [
+          "Business name contains special characters or emoji",
+          "Registration number format varies by country"
+        ],
+        "externalDependencies": [
+          { "name": "ProfileService", "type": "shared state" }
+        ],
+        "errorHandling": [
+          { "error": "Network error loading business data", "handling": "Show retry button" },
+          { "error": "Invalid registration number", "handling": "Inline validation error" }
         ],
         "children": []
       }
     ]
   }
-}</pre>
-  </div>
+}</code></pre>
+  <p>Fields are optional &mdash; screens with no API calls or edge cases simply omit those keys.</p>
+</div>
+
+<!-- Tips -->
+<div class="tip-panel" style="margin: 1.25rem 0; padding: 1.1rem 1.3rem;">
+  <strong style="font-size: 0.95rem;">Tips</strong>
+  <ul style="margin-top: 0.4rem;">
+    <li><strong>Start with requirements, not API calls.</strong> The PM/designer should be able to fill in Step 1 without knowing any backend details.</li>
+    <li><strong>Edge cases are cheap to write, expensive to miss.</strong> Spend 5 minutes per screen thinking about empty states, race conditions, and unusual inputs.</li>
+    <li><strong>Error handling drives UX quality.</strong> "Show generic error" is not a strategy. Be specific: retry button? Inline message? Fallback content?</li>
+    <li><strong>The JSON is portable.</strong> Export it, check it into the repo, share it in a PR description. It's the contract between the spec and the code.</li>
+    <li><strong>Review the tree before generating code.</strong> It's much faster to rename an action or change an ownership type in the tree preview than to refactor generated code.</li>
+  </ul>
 </div>
 
 <!-- Getting Started -->
-<h2>Getting Started</h2>
-<div class="section">
-  <ol style="padding-left: 1.25rem;">
-    <li style="margin-bottom: 0.5rem;">
-      <strong>Open the <a href="requirements.html?feature=YourFeature" style="color:var(--cyan)">requirements page</a></strong>
-      with your feature name.
-    </li>
-    <li style="margin-bottom: 0.5rem;">
-      <strong>PM/Designer defines flows</strong> &mdash; add screens, requirements, and Figma screenshots.
-    </li>
-    <li style="margin-bottom: 0.5rem;">
-      <strong>Engineer adds API calls</strong>, edge cases, error handling, and external dependencies.
-    </li>
-    <li style="margin-bottom: 0.5rem;">
-      <strong>Click "Copy prompt for Claude Code"</strong> and paste into Claude Code in the
-      <a href="https://github.com/nicewisekid/transferwise-ios" style="color:var(--cyan)">transferwise-ios</a> or
-      <a href="https://github.com/nicewisekid/transferwise-android" style="color:var(--cyan)">transferwise-android</a> repo
-      with the <code>/feature-scaffold</code> skill.
-    </li>
-    <li style="margin-bottom: 0.5rem;">
-      <strong>Review the proposed architecture</strong> in the tree preview editor. Adjust ownership, actions, and deps.
-    </li>
-    <li>
-      <strong>Claude Code generates all production code</strong> &mdash; view models, views, networking, and navigation.
-    </li>
+<div class="cta-card">
+  <h2>Getting Started</h2>
+  <ol>
+    <li><a href="requirements-page.html">Open the requirements page</a> in your browser</li>
+    <li>Fill in your feature's screens and requirements</li>
+    <li>Click "Copy prompt for Claude Code" or use "Preview tree" for quick iteration</li>
+    <li>In Claude Code, run the <code>/feature-scaffold</code> skill in <code>transferwise-ios</code> or <code>transferwise-android</code> to scaffold the architecture from your spec</li>
+    <li>Review the generated tree, refine ownership types and actions, then let the skill generate all production code</li>
   </ol>
+  <p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-dim);">
+    The requirements page, SKILL.md, and companion Python scripts are in <code>skill-catalog/skills/feature-scaffold/</code>.
+  </p>
 </div>
 
 <div class="page-footer">
-  <span><a href="index.html">&larr; Back to Feature Specs</a></span>
-  <span>Spec-Driven Feature Workflow</span>
+  <span>Spec-Driven Feature Workflow &mdash; @StateReducer</span>
+  <span>Generated 2026-02-25</span>
 </div>
 
 <script>
@@ -460,10 +494,10 @@ function toggleTheme() {
   const next = current === 'dark' ? 'light' : 'dark';
   html.setAttribute('data-theme', next);
   document.getElementById('themeIcon').innerHTML = next === 'dark' ? '&#x1F319;' : '&#x2600;';
-  localStorage.setItem('wise-specs-theme', next);
+  localStorage.setItem('spec-workflow-theme', next);
 }
 (function() {
-  const saved = localStorage.getItem('wise-specs-theme');
+  const saved = localStorage.getItem('spec-workflow-theme');
   if (saved) {
     document.documentElement.setAttribute('data-theme', saved);
     document.getElementById('themeIcon').innerHTML = saved === 'dark' ? '&#x1F319;' : '&#x2600;';
