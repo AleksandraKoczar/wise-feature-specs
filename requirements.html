@@ -482,6 +482,7 @@ function createVM(name, parentId) {
     requirements: [],
     screenshots: [],
     apiCalls: [],
+    analyticsEvents: [],
     edgeCases: [],
     externalDependencies: [],
     errorHandling: [],
@@ -517,14 +518,15 @@ function renderStats() {
   const totalEdge = vms.reduce((s, v) => s + v.edgeCases.length, 0);
   const totalDeps = vms.reduce((s, v) => s + v.externalDependencies.length, 0);
   const totalErrors = vms.reduce((s, v) => s + v.errorHandling.length, 0);
+  const totalAnalytics = vms.reduce((s, v) => s + (v.analyticsEvents || []).length, 0);
   const named = vms.filter(v => v.name.trim()).length;
 
   document.getElementById('statsBar').innerHTML = `
     <div class="stat"><div class="stat-value" style="color:var(--purple)">${vms.length}</div><div class="stat-label">Screens</div></div>
     <div class="stat"><div class="stat-value" style="color:var(--text)">${totalReqs}</div><div class="stat-label">Requirements</div></div>
     <div class="stat"><div class="stat-value" style="color:var(--cyan)">${totalApis}</div><div class="stat-label">API Calls</div></div>
+    <div class="stat"><div class="stat-value" style="color:var(--rose)">${totalAnalytics}</div><div class="stat-label">Analytics</div></div>
     <div class="stat"><div class="stat-value" style="color:var(--amber)">${totalEdge}</div><div class="stat-label">Edge Cases</div></div>
-    <div class="stat"><div class="stat-value" style="color:var(--rose)">${totalErrors}</div><div class="stat-label">Error Handlers</div></div>
     <div class="stat"><div class="stat-value" style="color:var(--green)">${named}</div><div class="stat-label">Named</div></div>
   `;
 
@@ -630,6 +632,33 @@ function renderVM(vm) {
     html += `</div>`;
   }
   html += `<input class="add-input mono" placeholder="+ Add API call... e.g. POST /v1/profiles/{id}/orders (press Enter)" onkeydown="addApiKey(event, ${vm.id}, this)">`;
+  html += `</div>`;
+
+  // Analytics / Mixpanel Events
+  const analyticsCount = vm.analyticsEvents.length;
+  html += `<div class="input-section-full">`;
+  html += `<div class="section-header"><span class="section-title"><span class="icon">&#x1F4CA;</span> Analytics Events (Mixpanel)</span><span class="section-count">${analyticsCount}</span></div>`;
+  html += `<div class="section-hint">What events should be tracked? Define event name, trigger, and key properties.</div>`;
+  if (analyticsCount) {
+    html += `<table style="width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.3rem;">`;
+    html += `<thead><tr style="border-bottom:1px solid var(--border);">`;
+    html += `<th style="text-align:left;padding:0.3rem 0.4rem;font-size:0.68rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;">Event Name</th>`;
+    html += `<th style="text-align:left;padding:0.3rem 0.4rem;font-size:0.68rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;">Trigger</th>`;
+    html += `<th style="text-align:left;padding:0.3rem 0.4rem;font-size:0.68rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.04em;">Properties</th>`;
+    html += `<th style="width:30px;"></th>`;
+    html += `</tr></thead><tbody>`;
+    for (let i = 0; i < vm.analyticsEvents.length; i++) {
+      const ev = vm.analyticsEvents[i];
+      html += `<tr style="border-bottom:1px solid rgba(255,255,255,0.03);">`;
+      html += `<td style="padding:0.25rem 0.15rem;"><input class="api-input endpoint" value="${esc(ev.name || '')}" placeholder="e.g. screen_viewed" oninput="updateAnalytics(${vm.id}, ${i}, 'name', this.value)" style="color:var(--rose);"></td>`;
+      html += `<td style="padding:0.25rem 0.15rem;"><input class="api-input trigger" value="${esc(ev.trigger || '')}" placeholder="e.g. onAppear, buttonTapped" oninput="updateAnalytics(${vm.id}, ${i}, 'trigger', this.value)"></td>`;
+      html += `<td style="padding:0.25rem 0.15rem;"><input class="api-input trigger" value="${esc(ev.properties || '')}" placeholder="e.g. screen_name, item_id" oninput="updateAnalytics(${vm.id}, ${i}, 'properties', this.value)"></td>`;
+      html += `<td style="padding:0.25rem 0.15rem;"><button class="item-remove" style="opacity:1" onclick="removeAnalytics(${vm.id}, ${i})" title="Remove">&#x2715;</button></td>`;
+      html += `</tr>`;
+    }
+    html += `</tbody></table>`;
+  }
+  html += `<input class="add-input mono" placeholder="+ Add analytics event... e.g. transfer_started (press Enter)" onkeydown="addAnalyticsKey(event, ${vm.id}, this)">`;
   html += `</div>`;
 
   // Edge Cases
@@ -896,6 +925,31 @@ function addErrorHandlerKey(event, vmId, input) {
   render();
 }
 
+// Analytics Events CRUD
+function updateAnalytics(vmId, index, field, value) {
+  const vm = getVM(vmId);
+  if (vm && vm.analyticsEvents[index]) vm.analyticsEvents[index][field] = value;
+}
+
+function removeAnalytics(vmId, index) {
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.analyticsEvents.splice(index, 1);
+  render();
+}
+
+function addAnalyticsKey(event, vmId, input) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  const val = input.value.trim();
+  if (!val) return;
+  const vm = getVM(vmId);
+  if (!vm) return;
+  vm.analyticsEvents.push({ name: val, trigger: '', properties: '' });
+  input.value = '';
+  render();
+}
+
 function updateTitle() {
   const name = document.getElementById('featureName').value;
   document.getElementById('featureTitle').textContent = name;
@@ -921,6 +975,13 @@ function buildTree() {
       node.apiCalls = vm.apiCalls.filter(a => a.endpoint?.trim()).map(a => ({
         endpoint: a.endpoint.trim(),
         trigger: a.trigger?.trim() || ''
+      }));
+    }
+    if ((vm.analyticsEvents || []).length) {
+      node.analyticsEvents = vm.analyticsEvents.filter(a => a.name?.trim()).map(a => ({
+        name: a.name.trim(),
+        trigger: a.trigger?.trim() || '',
+        properties: a.properties?.trim() || ''
       }));
     }
     if (vm.edgeCases.length) {
@@ -1660,6 +1721,11 @@ function loadFromJson(data) {
     vm.apiCalls = (node.apiCalls || []).map(a => ({
       endpoint: a.endpoint || a.method || '',
       trigger: a.trigger || ''
+    }));
+    vm.analyticsEvents = (node.analyticsEvents || []).map(a => ({
+      name: a.name || '',
+      trigger: a.trigger || '',
+      properties: a.properties || ''
     }));
     vm.edgeCases = node.edgeCases || [];
     vm.externalDependencies = (node.externalDependencies || []).map(d => ({
