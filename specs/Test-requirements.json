@@ -1,0 +1,31 @@
+{
+  "featureName": "Test",
+  "outputPath": "Wise/Test",
+  "root": {
+    "name": "InvoiceWalkthrough",
+    "requirements": [
+      "For each list item inside InvoiceHub, there is a tooltip with some description that explains what functionality lies behind it. For example, for the items list item, we should have \"This allows customers to add multiple items with specific prices and taxes\".",
+      "The tooltip allows to go to next list item, or cancel the walkthrough.",
+      "The walkthrough only shows up for users who have never created an invoice before. We should use a specific API to check that isNew information."
+    ],
+    "children": []
+  },
+  "_vms": [
+    {
+      "id": 0,
+      "name": "InvoiceWalkthrough",
+      "parentId": null,
+      "requirements": [
+        "For each list item inside InvoiceHub, there is a tooltip with some description that explains what functionality lies behind it. For example, for the items list item, we should have \"This allows customers to add multiple items with specific prices and taxes\".",
+        "The tooltip allows to go to next list item, or cancel the walkthrough.",
+        "The walkthrough only shows up for users who have never created an invoice before. We should use a specific API to check that isNew information."
+      ],
+      "screenshots": [],
+      "apiCalls": [],
+      "edgeCases": [],
+      "externalDependencies": [],
+      "errorHandling": [],
+      "collapsed": false
+    }
+  ]
+}
