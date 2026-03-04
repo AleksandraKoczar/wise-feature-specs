@@ -153,6 +153,79 @@
   }
   [data-theme="light"] .theme-toggle .toggle-thumb { left: calc(100% - 22px); }
 
+  /* Features list */
+  .features-section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.5rem 1.75rem; margin-bottom: 1rem;
+  }
+  .features-section h2 {
+    font-size: 1.15rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.2rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .features-section .section-desc {
+    font-size: 0.82rem; color: var(--text-dim); margin-bottom: 1rem; line-height: 1.5;
+  }
+  .features-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .feature-item {
+    display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.85rem;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    cursor: pointer; transition: all 0.15s ease; text-decoration: none; color: inherit;
+  }
+  .feature-item:hover { border-color: var(--border-hover); background: var(--surface3); transform: translateX(4px); }
+  .feature-name {
+    font-family: 'Geist Mono', monospace; font-size: 0.92rem; font-weight: 600;
+    color: var(--text-bright); flex: 1; min-width: 0; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .feature-meta-info {
+    display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0;
+  }
+  .feature-stat {
+    font-size: 0.68rem; font-weight: 600; padding: 0.12rem 0.45rem; border-radius: 12px;
+    white-space: nowrap;
+  }
+  .feature-stat-screens { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+  .feature-stat-reqs { background: var(--surface3); color: var(--text-dim); border: 1px solid var(--border); }
+  .feature-stat-synced { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .feature-stat-local { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .feature-actions { display: flex; gap: 0.3rem; align-items: center; flex-shrink: 0; }
+  .feature-action-btn {
+    background: none; border: 1px solid transparent; color: var(--text-dim);
+    cursor: pointer; font-size: 0.78rem; padding: 0.2rem 0.4rem; border-radius: 4px;
+    transition: all 0.15s ease; line-height: 1;
+  }
+  .feature-action-btn:hover { color: var(--red); background: var(--red-bg); border-color: var(--red-border); }
+  .feature-action-btn.sync-btn:hover { color: var(--green); background: var(--green-bg); border-color: var(--green-border); }
+  .features-empty {
+    color: var(--text-dim); font-size: 0.85rem; font-style: italic; padding: 0.5rem 0;
+  }
+  .github-config {
+    margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border);
+    display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;
+  }
+  .github-config label {
+    font-size: 0.72rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .github-config input {
+    font-family: 'Geist Mono', monospace; font-size: 0.8rem;
+    background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 0.35rem 0.65rem; color: var(--text); outline: none; flex: 1; min-width: 150px;
+  }
+  .github-config input:focus { border-color: var(--green); }
+  .github-config input::placeholder { color: var(--text-dim); opacity: 0.5; }
+  .github-config button {
+    font-size: 0.78rem; font-weight: 600; padding: 0.35rem 0.85rem;
+    background: var(--green-bg); border: 1px solid var(--green-border); border-radius: var(--radius-sm);
+    color: var(--green); cursor: pointer; transition: all 0.15s ease; white-space: nowrap;
+  }
+  .github-config button:hover { background: rgba(52,211,153,0.18); }
+  .github-status {
+    font-size: 0.72rem; color: var(--text-dim); width: 100%; margin-top: 0.25rem;
+  }
+  .github-status.connected { color: var(--green); }
+  .github-status.error { color: var(--red); }
+
   .page-footer {
     margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
     color: var(--text-dim); font-size: 0.75rem; display: flex;
@@ -212,6 +285,18 @@
   </div>
 </div>
 
+<div class="features-section" id="featuresSection">
+  <h2>Your Features <span class="badge badge-purple" id="featureCount">0</span></h2>
+  <div class="section-desc">Previously saved feature specs. Click to continue editing.</div>
+  <div class="features-list" id="featuresList"></div>
+  <div class="github-config">
+    <label>GitHub Token</label>
+    <input type="password" id="githubToken" placeholder="ghp_... (for cross-device sync)" oninput="saveGitHubConfig()">
+    <button onclick="syncFromGitHub()">Sync</button>
+    <div class="github-status" id="githubStatus"></div>
+  </div>
+</div>
+
 <div class="tool-grid">
 
   <div class="tool-card accent-purple">
@@ -258,6 +343,229 @@
 </div>
 
 <script>
+// ---------------------------------------------------------------
+// GitHub config
+// ---------------------------------------------------------------
+const REPO_OWNER = 'aleksandrakoczar';
+const REPO_NAME = 'wise-feature-specs';
+const SPECS_PATH = 'specs';
+
+function getGitHubToken() {
+  return localStorage.getItem('wise-specs-gh-token') || '';
+}
+
+function saveGitHubConfig() {
+  const token = document.getElementById('githubToken').value.trim();
+  if (token) {
+    localStorage.setItem('wise-specs-gh-token', token);
+  } else {
+    localStorage.removeItem('wise-specs-gh-token');
+  }
+}
+
+// ---------------------------------------------------------------
+// Features list
+// ---------------------------------------------------------------
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');
+}
+
+function getLocalFeatures() {
+  const features = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('feature-scaffold:')) {
+      const name = key.replace('feature-scaffold:', '');
+      if (!name || name === 'draft') continue;
+      try {
+        const data = JSON.parse(localStorage.getItem(key));
+        const vms = data._vms || [];
+        const totalReqs = vms.reduce((s, v) => s + (v.requirements || []).length, 0);
+        const totalApis = vms.reduce((s, v) => s + (v.apiCalls || []).length, 0);
+        features.push({
+          name: name,
+          screens: vms.length,
+          requirements: totalReqs,
+          apiCalls: totalApis,
+          source: 'local'
+        });
+      } catch(e) {
+        features.push({ name: name, screens: 0, requirements: 0, apiCalls: 0, source: 'local' });
+      }
+    }
+  }
+  // Check which ones are also synced to GitHub
+  const syncedFeatures = JSON.parse(localStorage.getItem('wise-specs-synced') || '{}');
+  for (const f of features) {
+    if (syncedFeatures[f.name]) {
+      f.source = 'synced';
+      f.lastSynced = syncedFeatures[f.name];
+    }
+  }
+  return features.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function renderFeatures() {
+  const features = getLocalFeatures();
+  const list = document.getElementById('featuresList');
+  const count = document.getElementById('featureCount');
+  count.textContent = features.length;
+
+  if (features.length === 0) {
+    list.innerHTML = '<div class="features-empty">No features yet. Create one above to get started.</div>';
+    return;
+  }
+
+  let html = '';
+  for (const f of features) {
+    html += '<a class="feature-item" href="requirements.html?feature=' + encodeURIComponent(f.name) + '">';
+    html += '<span class="feature-name">' + esc(f.name) + '</span>';
+    html += '<div class="feature-meta-info">';
+    if (f.screens) html += '<span class="feature-stat feature-stat-screens">' + f.screens + ' screens</span>';
+    if (f.requirements) html += '<span class="feature-stat feature-stat-reqs">' + f.requirements + ' reqs</span>';
+    if (f.source === 'synced') {
+      html += '<span class="feature-stat feature-stat-synced">synced</span>';
+    } else {
+      html += '<span class="feature-stat feature-stat-local">local only</span>';
+    }
+    html += '</div>';
+    html += '<div class="feature-actions">';
+    html += '<button class="feature-action-btn sync-btn" onclick="event.preventDefault(); event.stopPropagation(); pushFeatureToGitHub(\'' + esc(f.name) + '\')" title="Push to GitHub">&#x2191;</button>';
+    html += '<button class="feature-action-btn" onclick="event.preventDefault(); event.stopPropagation(); deleteFeature(\'' + esc(f.name) + '\')" title="Delete locally">&#x2715;</button>';
+    html += '</div>';
+    html += '</a>';
+  }
+  list.innerHTML = html;
+}
+
+function deleteFeature(name) {
+  if (!confirm('Delete "' + name + '" from local storage?')) return;
+  localStorage.removeItem('feature-scaffold:' + name);
+  renderFeatures();
+}
+
+// ---------------------------------------------------------------
+// GitHub sync
+// ---------------------------------------------------------------
+function setGitHubStatus(msg, type) {
+  const el = document.getElementById('githubStatus');
+  el.textContent = msg;
+  el.className = 'github-status' + (type ? ' ' + type : '');
+}
+
+async function ghFetch(path, options) {
+  const token = getGitHubToken();
+  if (!token) throw new Error('No GitHub token configured');
+  const resp = await fetch('https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/' + path, {
+    ...options,
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+      ...(options?.headers || {})
+    }
+  });
+  if (!resp.ok) {
+    const body = await resp.text();
+    throw new Error('GitHub API ' + resp.status + ': ' + body);
+  }
+  return resp.json();
+}
+
+async function syncFromGitHub() {
+  const token = getGitHubToken();
+  if (!token) {
+    setGitHubStatus('Enter a GitHub personal access token first.', 'error');
+    return;
+  }
+  setGitHubStatus('Syncing...', '');
+  try {
+    // List files in specs/ directory
+    const files = await ghFetch('contents/' + SPECS_PATH);
+    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+    const syncedFeatures = JSON.parse(localStorage.getItem('wise-specs-synced') || '{}');
+    let imported = 0;
+
+    for (const file of jsonFiles) {
+      const featureName = file.name.replace('-requirements.json', '').replace('.json', '');
+      // Fetch file content
+      const fileData = await ghFetch('contents/' + SPECS_PATH + '/' + file.name);
+      const content = atob(fileData.content.replace(/\n/g, ''));
+      const data = JSON.parse(content);
+
+      // Only overwrite local if local doesn't exist or is older than remote
+      const localKey = 'feature-scaffold:' + featureName;
+      if (!localStorage.getItem(localKey)) {
+        // Convert from tree format to internal format with _vms
+        localStorage.setItem(localKey, JSON.stringify(data));
+        imported++;
+      }
+      syncedFeatures[featureName] = new Date().toISOString();
+    }
+    localStorage.setItem('wise-specs-synced', JSON.stringify(syncedFeatures));
+    renderFeatures();
+    setGitHubStatus('Synced ' + jsonFiles.length + ' specs from GitHub (' + imported + ' new).', 'connected');
+  } catch(e) {
+    setGitHubStatus('Sync failed: ' + e.message, 'error');
+  }
+}
+
+async function pushFeatureToGitHub(featureName) {
+  const token = getGitHubToken();
+  if (!token) {
+    setGitHubStatus('Enter a GitHub token to push specs.', 'error');
+    return;
+  }
+  setGitHubStatus('Pushing ' + featureName + '...', '');
+  try {
+    const localKey = 'feature-scaffold:' + featureName;
+    const data = localStorage.getItem(localKey);
+    if (!data) {
+      setGitHubStatus('Feature not found in local storage.', 'error');
+      return;
+    }
+
+    // Build a clean export (without _vms internal format, keep the tree format)
+    const parsed = JSON.parse(data);
+    // Store the full internal format so other devices can load it
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(parsed, null, 2))));
+    const filePath = SPECS_PATH + '/' + featureName + '-requirements.json';
+
+    // Check if file already exists (to get its sha for updating)
+    let sha = null;
+    try {
+      const existing = await ghFetch('contents/' + filePath);
+      sha = existing.sha;
+    } catch(e) {
+      // File doesn't exist yet, that's fine
+    }
+
+    const body = {
+      message: 'Update spec: ' + featureName,
+      content: content
+    };
+    if (sha) body.sha = sha;
+
+    await ghFetch('contents/' + filePath, {
+      method: 'PUT',
+      body: JSON.stringify(body)
+    });
+
+    // Mark as synced
+    const syncedFeatures = JSON.parse(localStorage.getItem('wise-specs-synced') || '{}');
+    syncedFeatures[featureName] = new Date().toISOString();
+    localStorage.setItem('wise-specs-synced', JSON.stringify(syncedFeatures));
+
+    renderFeatures();
+    setGitHubStatus('Pushed "' + featureName + '" to GitHub.', 'connected');
+  } catch(e) {
+    setGitHubStatus('Push failed: ' + e.message, 'error');
+  }
+}
+
+// ---------------------------------------------------------------
+// Navigation
+// ---------------------------------------------------------------
 function openRequirements() {
   const name = document.getElementById('featureName').value.trim();
   if (!name) { document.getElementById('featureName').focus(); return; }
@@ -269,7 +577,6 @@ function openPreview() {
   if (!json) { document.getElementById('treeJson').focus(); return; }
   try {
     const tree = JSON.parse(json);
-    // Store in sessionStorage and open preview page
     sessionStorage.setItem('preview-tree-json', json);
     window.location.href = 'preview.html';
   } catch(e) {
@@ -277,6 +584,9 @@ function openPreview() {
   }
 }
 
+// ---------------------------------------------------------------
+// Theme
+// ---------------------------------------------------------------
 function toggleTheme() {
   const html = document.documentElement;
   const current = html.getAttribute('data-theme') || 'dark';
@@ -286,12 +596,23 @@ function toggleTheme() {
   localStorage.setItem('wise-specs-theme', next);
 }
 
+// ---------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------
 (function() {
+  // Restore theme
   const saved = localStorage.getItem('wise-specs-theme');
   if (saved) {
     document.documentElement.setAttribute('data-theme', saved);
     document.getElementById('themeIcon').innerHTML = saved === 'dark' ? '&#x1F319;' : '&#x2600;';
   }
+  // Restore GitHub token
+  const token = localStorage.getItem('wise-specs-gh-token');
+  if (token) {
+    document.getElementById('githubToken').value = token;
+  }
+  // Render features list
+  renderFeatures();
 })();
 </script>
 </body>

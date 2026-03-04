@@ -446,7 +446,9 @@
     <button class="btn btn-preview" onclick="previewTree()">Preview tree</button>
     <button class="btn btn-export" onclick="exportJson()">Export as JSON</button>
     <button class="btn btn-secondary" onclick="importJson()">Import JSON</button>
+    <button class="btn btn-secondary" onclick="pushToGitHub()" id="pushBtn" style="color:var(--green);border-color:var(--green-border);background:var(--green-bg)">Push to GitHub</button>
   </div>
+  <div id="pushStatus" style="font-size:0.78rem;margin-top:0.5rem;color:var(--text-dim)"></div>
 </div>
 
 <div class="toast" id="toast">Copied!</div>
@@ -1803,6 +1805,84 @@ function toggleTheme() {
     document.getElementById('themeIcon').innerHTML = saved === 'dark' ? '&#x1F319;' : '&#x2600;';
   }
 })();
+
+// ---------------------------------------------------------------
+// GitHub sync
+// ---------------------------------------------------------------
+const REPO_OWNER = 'aleksandrakoczar';
+const REPO_NAME = 'wise-feature-specs';
+const SPECS_PATH = 'specs';
+
+function getGitHubToken() {
+  return localStorage.getItem('wise-specs-gh-token') || '';
+}
+
+async function pushToGitHub() {
+  const token = getGitHubToken();
+  if (!token) {
+    document.getElementById('pushStatus').innerHTML = 'No GitHub token. <a href="." style="color:var(--cyan)">Set it on the home page</a> first.';
+    return;
+  }
+  const featureName = document.getElementById('featureName').value.trim();
+  if (!featureName || featureName === '__FEATURE_NAME__') {
+    showToast('Set a feature name first');
+    return;
+  }
+  const statusEl = document.getElementById('pushStatus');
+  statusEl.textContent = 'Pushing to GitHub...';
+  statusEl.style.color = 'var(--text-dim)';
+
+  try {
+    const localKey = 'feature-scaffold:' + featureName;
+    const data = localStorage.getItem(localKey);
+    if (!data) {
+      statusEl.textContent = 'No saved data to push. Make some edits first.';
+      statusEl.style.color = 'var(--amber)';
+      return;
+    }
+
+    const parsed = JSON.parse(data);
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(parsed, null, 2))));
+    const filePath = SPECS_PATH + '/' + featureName + '-requirements.json';
+    const apiBase = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + filePath;
+    const headers = {
+      'Authorization': 'Bearer ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+
+    // Check if file exists
+    let sha = null;
+    try {
+      const resp = await fetch(apiBase, { headers });
+      if (resp.ok) {
+        const existing = await resp.json();
+        sha = existing.sha;
+      }
+    } catch(e) {}
+
+    const body = { message: 'Update spec: ' + featureName, content: content };
+    if (sha) body.sha = sha;
+
+    const resp = await fetch(apiBase, { method: 'PUT', headers, body: JSON.stringify(body) });
+    if (!resp.ok) {
+      const errBody = await resp.text();
+      throw new Error('GitHub API ' + resp.status + ': ' + errBody);
+    }
+
+    // Mark as synced
+    const syncedFeatures = JSON.parse(localStorage.getItem('wise-specs-synced') || '{}');
+    syncedFeatures[featureName] = new Date().toISOString();
+    localStorage.setItem('wise-specs-synced', JSON.stringify(syncedFeatures));
+
+    statusEl.textContent = 'Pushed to GitHub successfully.';
+    statusEl.style.color = 'var(--green)';
+    showToast('Pushed to GitHub');
+  } catch(e) {
+    statusEl.textContent = 'Push failed: ' + e.message;
+    statusEl.style.color = 'var(--red)';
+  }
+}
 
 // ---------------------------------------------------------------
 // URL params + localStorage persistence
